@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button, Modal, Form } from "react-bootstrap";
+import { Card, Button, Modal, Form, Spinner } from "react-bootstrap";
 import axios from "axios";
-import { FaStar, FaPhoneAlt, FaDollarSign } from "react-icons/fa";
+import { FaStar, FaMapMarkerAlt, FaDollarSign } from "react-icons/fa";
 import "./Property.css";
 import appUrl from "../../appUrl";
 
@@ -14,9 +14,11 @@ const PropertyList = () => {
   const [rating, setRating] = useState(0);
   const [selectedImages, setSelectedImages] = useState([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Function to fetch properties
   const fetchProperties = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${AppUrl}/property`);
       if (response.data.code === 200) {
@@ -31,13 +33,14 @@ const PropertyList = () => {
       }
     } catch (error) {
       console.error("Error fetching properties:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // useEffect hook to fetch properties on initial load
   useEffect(() => {
     fetchProperties();
-  }, []); // Empty dependency array so it only runs on mount
+  }, []);
 
   const handleCardSelect = (propertyId) => {
     setSelectedProperty(propertyId);
@@ -50,9 +53,8 @@ const PropertyList = () => {
     formData.append("rating", rating);
     formData.append("propertyId", selectedProperty);
 
-    // Send all images under the same field name "photos"
     selectedImages.forEach((photo) => {
-      formData.append("photos", photo); // No need for an indexed key
+      formData.append("photos", photo);
     });
 
     try {
@@ -65,7 +67,7 @@ const PropertyList = () => {
         setRating(0);
         setSelectedImages([]);
         setShowReviewModal(false);
-        fetchProperties(); // Fetch properties again after adding review
+        fetchProperties();
       }
     } catch (error) {
       console.error("Error adding review:", error);
@@ -81,7 +83,6 @@ const PropertyList = () => {
     setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  // Function to calculate the average rating
   const calculateAverageRating = (ratings) => {
     if (ratings.length === 0) return 0;
     const totalRating = ratings.reduce((acc, rating) => acc + rating, 0);
@@ -90,11 +91,15 @@ const PropertyList = () => {
 
   return (
     <div>
-      <div>
-        <h5 className="mb-4">Search Results</h5>
+      <h5 className="mb-4">Search Results</h5>
+      {loading ? (
+        <div className="spinner-container">
+          <Spinner animation="border" />
+        </div>
+      ) : (
         <div className="property-list">
           {properties.map((property) => {
-            const averageRating = calculateAverageRating(property.rating); // Calculate average rating
+            const averageRating = calculateAverageRating(property.rating);
             return (
               <div className="col-md-4 mb-4" key={property._id}>
                 <Card
@@ -107,21 +112,26 @@ const PropertyList = () => {
                     className="property-image"
                   />
                   <Card.Body className="property-body">
-                    <h6 className="property-title">{property.property_name}</h6>
-                    <p className="property-location">{property.location.location_name}</p>
-                    <p className="property-description">{property.description}</p>
+                    <h6 className="property-title" title={property.property_name}>
+                      {property.property_name}
+                    </h6>
+                    {/* <p className="property-location">
+                      <FaMapMarkerAlt className="icon" /> {property.location.location_name}
+                    </p> */}
+                    {/* <p className="property-description">{property.description}</p> */}
                     <div className="property-meta">
-                      <p className="price"><FaDollarSign /> {property.price}</p>
-                      {/* <p><FaPhoneAlt /> {property.mobile_number}</p> */}
+                      <p className="price">
+                        <FaDollarSign className="icon" /> {property.price}
+                      </p>
                     </div>
-                    {/* Display the average rating */}
                     <p className="property-rating">
-                      Rating: {averageRating.toFixed(1)} 
-                      <FaStar color={averageRating >= 1 ? "yellow" : "gray"} />
-                      <FaStar color={averageRating >= 2 ? "yellow" : "gray"} />
-                      <FaStar color={averageRating >= 3 ? "yellow" : "gray"} />
-                      <FaStar color={averageRating >= 4 ? "yellow" : "gray"} />
-                      <FaStar color={averageRating >= 5 ? "yellow" : "gray"} />
+                      Rating: {averageRating.toFixed(1)}
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar
+                          key={i}
+                          color={i < averageRating ? "yellow" : "gray"}
+                        />
+                      ))}
                     </p>
                   </Card.Body>
                   <Button
@@ -136,62 +146,62 @@ const PropertyList = () => {
             );
           })}
         </div>
+      )}
 
-        {/* Review Modal */}
-        <Modal show={showReviewModal} onHide={() => setShowReviewModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Add a Review</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <Form.Group controlId="reviewText">
-                <Form.Label>Write your review</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  value={newReview}
-                  onChange={(e) => setNewReview(e.target.value)}
-                />
-              </Form.Group>
-              <Form.Group controlId="rating">
-                <Form.Label>Rate this property</Form.Label>
-                <div className="stars">
-                  {[...Array(5)].map((_, i) => (
-                    <FaStar
-                      key={i}
-                      onClick={() => setRating(i + 1)}
-                      color={i < rating ? "yellow" : "gray"}
-                      className="star"
-                    />
-                  ))}
-                </div>
-              </Form.Group>
-              <Form.Group controlId="reviewImages">
-                <Form.Label>Upload images (optional)</Form.Label>
-                <input type="file" multiple onChange={handleImageChange} accept="image/*" />
-                <div className="selected-images">
-                  {selectedImages.map((img, index) => (
-                    <div key={index} className="image-preview">
-                      <img src={URL.createObjectURL(img)} alt={`preview-${index}`} className="image-thumb" />
-                      <Button variant="danger" onClick={() => handleDeleteImage(index)}>
-                        Delete
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </Form.Group>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowReviewModal(false)}>
-              Close
-            </Button>
-            <Button variant="primary" onClick={handleAddReview}>
-              Submit Review
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </div>
+      {/* Review Modal */}
+      <Modal show={showReviewModal} onHide={() => setShowReviewModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add a Review</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="modal-body-custom">
+          <Form>
+            <Form.Group controlId="reviewText">
+              <Form.Label>Write your review</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={newReview}
+                onChange={(e) => setNewReview(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="rating">
+              <Form.Label>Rate this property</Form.Label>
+              <div className="stars">
+                {[...Array(5)].map((_, i) => (
+                  <FaStar
+                    key={i}
+                    onClick={() => setRating(i + 1)}
+                    color={i < rating ? "yellow" : "gray"}
+                    className="star"
+                  />
+                ))}
+              </div>
+            </Form.Group>
+            <Form.Group controlId="reviewImages">
+              <Form.Label>Upload images (optional)</Form.Label>
+              <input type="file" multiple onChange={handleImageChange} accept="image/*" />
+              <div className="selected-images">
+                {selectedImages.map((img, index) => (
+                  <div key={index} className="image-preview">
+                    <img src={URL.createObjectURL(img)} alt={`preview-${index}`} className="image-thumb" />
+                    <Button variant="danger" onClick={() => handleDeleteImage(index)}>
+                      Delete
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowReviewModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleAddReview}>
+            Submit Review
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
