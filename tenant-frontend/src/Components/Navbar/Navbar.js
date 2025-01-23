@@ -6,6 +6,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("token");
     window.location.reload(); // Reloads the page after logout
   };
 
