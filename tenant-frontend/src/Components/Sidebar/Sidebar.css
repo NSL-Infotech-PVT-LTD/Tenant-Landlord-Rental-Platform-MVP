@@ -1,0 +1,52 @@
+.sidebar-main {
+    /* width: 300px; */
+    background-color: black;
+    padding:16px 32px
+}
+
+.sidebar-main h6{
+    color: rgb(170, 170, 170);
+    font-weight: 600;
+ }
+.sidebar-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.sidebar-name {
+    width: 120px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.sidebar-name:hover {
+    transform: scale(1.05);
+    background-color: #e6e6e6;
+}
+
+.sidebar-name p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.sidebar-name.selected {
+    border: 2px solid #007bff;
+    background-color: #e0f0ff;
+    color: #007bff;
+  }
+  
+  .sidebar-name.selected p {
+    font-weight: 700; /* Bold text for the selected option */
+  }
+  

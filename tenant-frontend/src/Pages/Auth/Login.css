@@ -1,0 +1,229 @@
+.signup {
+  background-image: url(../../../public/images/back.jpg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  max-height: 100%;
+}
+
+.signup-card {
+  font-family: "Inter", sans-serif;
+  background-color: white;
+  color: black;
+  margin: 30px 0;
+  width: 430px;
+  min-height: 460px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 20px 0;
+}
+
+.signup-width {
+  width: 360px;
+}
+
+.welcome-head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome-head h1 {
+  margin-top: 2px;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.description {
+  font-size: 16px;
+  color: #858585;
+  font-weight: 600;
+  text-align: center;
+}
+
+.signup-form {
+  margin: 0px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.signup-form p {
+  width: 100%;
+  float: left;
+}
+
+.signup-fields {
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+  height: 66px;
+  background-color: #F5F5F5;
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+  color: #616161;
+  position: relative;
+}
+
+.passwordTyping {}
+
+.SignUp-button {
+  
+  text-align: center;
+  width: 360px;
+  height: 55px;
+}
+
+.SignUp-button button {
+  width: 360px;
+  display: flex;
+  justify-content: center;
+  height: 55px;
+  position: relative;
+  font-size: 12.8px;
+  font-weight: 600;
+  color: white;
+  padding: 16px 32px;
+  background-color: #1F61FF;
+}
+
+.SignUp-button svg {
+  font-size: 20px;
+  position: absolute;
+  left: 70%;
+}
+
+.eye {
+  position: absolute;
+  right: 14px;
+  top: 16px;
+  cursor: pointer;
+}
+
+.forget {
+  text-align: right;
+  color: #1F61FF;
+  cursor: pointer;
+}
+
+.already {
+  color: #616161;
+  font-weight: 500;
+  font-size: 15px;
+  text-align: center;
+}
+
+.already span {
+  text-decoration: underline;
+  color: #1F61FF;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.signup-fields label {
+  margin-bottom: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #616161;
+}
+
+.signup-fields svg {
+  top: 25px;
+  position: absolute;
+  right: 20px;
+  color: rgb(114, 114, 114);
+  font-size: 18px;
+}
+
+.signup-fields input {
+  background-color: #F5F5F5;
+  border: none;
+  font-size: 16px;
+  color: #212121;
+}
+
+input:-internal-autofill-selected {
+  border: 0px;
+  background-color: #F5F5F5;
+  outline: none;
+}
+
+.signup-fields input:focus {
+  border: 0px;
+  background-color: #F5F5F5;
+  outline: none;
+}
+
+.signup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.signup-card {
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+}
+
+.welcome-head h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.description {
+  font-size: 14px;
+  color: #616161;
+}
+
+.SignUp-button button {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #1F61FF;
+  border: none;
+  width: 100%;
+  height: 50px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.SignUp-button button p {
+  display: flex;
+  align-items: center;
+  margin: 120px;
+}
+
+.SignUp-button button svg {
+  margin-left: 4px;
+  font-size: 20px;
+}
+
+.forget p {
+  font-size: 12px;
+  color: #1F61FF;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.already span {
+  color: #1F61FF;
+  cursor: pointer;
+  text-decoration: underline;
+}
