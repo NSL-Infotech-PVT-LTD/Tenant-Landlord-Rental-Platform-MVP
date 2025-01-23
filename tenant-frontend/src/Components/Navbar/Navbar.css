@@ -72,7 +72,7 @@
     background-color: #a31b1b;
   }
   /* Modal overlay */
-.modal-overlay {
+  .navbar-main .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -86,7 +86,7 @@
 }
 
 /* Modal content */
-.modal-content {
+.navbar-main .modal-content {
   background: white;
   padding: 20px;
   border-radius: 8px;
@@ -95,15 +95,16 @@
   width: 300px;
 }
 
-.modal-content h2 {
+.navbar-main .modal-content h2 {
   margin-bottom: 20px;
   font-size: 18px;
   color: #333;
 }
 
-.modal-buttons {
+.navbar-main .modal-buttons {
+  column-gap: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .confirm-button {

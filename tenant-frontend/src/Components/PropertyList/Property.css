@@ -15,6 +15,14 @@
   align-items: center;
   height: 300px;
 }
+.property-view-main .modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: left;
+  width: 560px;
+}
 
 .property-list {
   display: flex;
@@ -84,7 +92,8 @@
 }
 
 .review-button {
-  background-color: #007bff;
+  padding: 8px 32px;
+  background-color: #008000;
   color: #fff;
   border: none;
   margin: 10px;
@@ -95,13 +104,17 @@
   background-color: #0056b3;
 }
 
-.review-modal .modal-header {
+.property-view-main .modal-header {
   background-color: #f8f9fa;
   border-bottom: none;
 }
 
-.review-modal .modal-footer {
+.property-view-main .modal-footer {
   border-top: none;
+}
+
+textarea.form-control {
+  background-color: rgb(241, 241, 241);
 }
 
 .selected-images {
@@ -128,4 +141,33 @@
   right: -5px;
   font-size: 12px;
   padding: 2px 5px;
+}
+
+.form-label{
+  font-size: 18px;
+  font-weight: 600;
+}
+.property-view-main .modal-title {
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+text-align: center;
+}
+.review-modal-button-cancel {
+  color: red;
+  padding: 8px 24px;
+  width: 180px;
+  font-weight: 600;
+  background-color: white;
+  border: 1px solid red;
+  font-size: 16px;
+}
+.review-modal-button-submit {
+  color: white;
+  padding: 8px 24px;
+  width: 180px;
+  font-weight: 600;
+  background-color: #008000;
+  border: 1px solid #008000;
+  font-size: 16px;
 }

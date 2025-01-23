@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Card, Button, Modal, Form, Spinner } from "react-bootstrap";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { FaStar, FaMapMarkerAlt, FaDollarSign } from "react-icons/fa";
 import "./Property.css";
 import appUrl from "../../appUrl";
@@ -48,31 +50,52 @@ const PropertyList = () => {
   };
 
   const handleAddReview = async () => {
+    if (!newReview) {
+      return toast.error("Please enter a review");
+    }
+    if (!rating) {
+      return toast.error("Please provide a rating");
+    }
+  
     const formData = new FormData();
     formData.append("review_text", newReview);
     formData.append("rating", rating);
-    formData.append("propertyId", selectedProperty);
-
-    selectedImages.forEach((photo) => {
-      formData.append("photos", photo);
-    });
-
+    formData.append("propertyId", selectedProperty); // Ensure `selectedProperty` is valid
+  
+    // selectedImages.forEach((photo) => {
+    //   formData.append("photos", photo);
+    // });
+  
+    const tenantToken = localStorage.getItem("token");
+  
+    if (!tenantToken) {
+      return toast.error("User is not authenticated. Please log in.");
+    }
+  
     try {
       const response = await axios.post(`${AppUrl}/property/add-review`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          Authorization: `Bearer ${tenantToken}`,
+        },
       });
+  
       if (response.data.status) {
-        setReviews([...reviews, response.data.review]);
+        setReviews((prevReviews) => [...prevReviews, response.data.review]);
         setNewReview("");
         setRating(0);
         setSelectedImages([]);
         setShowReviewModal(false);
-        fetchProperties();
+        fetchProperties(); // Make sure this updates the properties list
+        toast.success("Review added successfully!");
+      } else {
+        toast.error(response.data.message || "Failed to add review.");
       }
     } catch (error) {
       console.error("Error adding review:", error);
+      toast.error("An error occurred while adding the review. Please try again.");
     }
   };
+  
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -90,7 +113,9 @@ const PropertyList = () => {
   };
 
   return (
-    <div>
+    <>
+     <ToastContainer />
+    <div className="property-view-main">
       <h5 className="mb-4">Search Results</h5>
       {loading ? (
         <div className="spinner-container">
@@ -149,8 +174,12 @@ const PropertyList = () => {
       )}
 
       {/* Review Modal */}
-      <Modal show={showReviewModal} onHide={() => setShowReviewModal(false)}>
-        <Modal.Header closeButton>
+      <Modal 
+      show={showReviewModal} 
+      onHide={() => setShowReviewModal(false)}
+      backdrop="static"
+      >
+        <Modal.Header>
           <Modal.Title>Add a Review</Modal.Title>
         </Modal.Header>
         <Modal.Body className="modal-body-custom">
@@ -162,11 +191,12 @@ const PropertyList = () => {
                 rows={3}
                 value={newReview}
                 onChange={(e) => setNewReview(e.target.value)}
+                className="mb-3"
               />
             </Form.Group>
             <Form.Group controlId="rating">
               <Form.Label>Rate this property</Form.Label>
-              <div className="stars">
+              <div className="stars mb-3">
                 {[...Array(5)].map((_, i) => (
                   <FaStar
                     key={i}
@@ -179,7 +209,7 @@ const PropertyList = () => {
             </Form.Group>
             <Form.Group controlId="reviewImages">
               <Form.Label>Upload images (optional)</Form.Label>
-              <input type="file" multiple onChange={handleImageChange} accept="image/*" />
+              <input type="file" multiple onChange={handleImageChange} accept="image/*" className="mb-3" />
               <div className="selected-images">
                 {selectedImages.map((img, index) => (
                   <div key={index} className="image-preview">
@@ -194,15 +224,16 @@ const PropertyList = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowReviewModal(false)}>
+          <Button className="review-modal-button-cancel" onClick={() => {setShowReviewModal(false);setSelectedImages([]);setNewReview("");setRating(0)}}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleAddReview}>
+          <Button className="review-modal-button-submit" onClick={handleAddReview}>
             Submit Review
           </Button>
         </Modal.Footer>
       </Modal>
     </div>
+    </>
   );
 };
 

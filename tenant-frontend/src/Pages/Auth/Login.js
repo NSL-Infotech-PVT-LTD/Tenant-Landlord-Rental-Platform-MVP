@@ -85,7 +85,7 @@ const Login = () => {
 
                 console.log("this data here",data);
                 if (data.code === 200) {
-                    storeTokenInLS(data.data.token);
+                    storeTokenInLS(data.token);
                     setIsLoggedIn(true);
                     setIsLoading(false);
                     console.log("Login successful");
