@@ -6,6 +6,7 @@ import { FaPhoneAlt, FaDollarSign } from 'react-icons/fa'; // Import icons
 import "./Property.css";
 import appUrl from "../../appUrl";
 
+
 const PropertyList = () => {
   const AppUrl = appUrl();
   const [properties, setProperties] = useState([]);
