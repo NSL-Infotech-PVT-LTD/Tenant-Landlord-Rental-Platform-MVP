@@ -1,7 +1,10 @@
 .property-list {
-  display: flex;
-  flex-wrap: wrap;
+  /* display: flex;
+  flex-wrap: wrap; */
   gap: 15px;
+}
+.card-body {
+padding: 24px;
 }
 
 .property-card {

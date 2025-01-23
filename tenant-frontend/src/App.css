@@ -67,7 +67,7 @@ h6 {
 .property-list {
   padding: 16px;
   border-top-left-radius: 30px;
-  border-right: 2px solid #ddd; 
+  /* border-right: 2px solid #ddd;  */
   background-color: #f7f7f7 !important;
 }
 

@@ -81,7 +81,7 @@ const PropertyList = () => {
       <h5 className="mb-4">Search Results</h5>
       <div className="property-list row">
         {properties.map((property) => (
-          <div className="col-md-4 mb-3" key={property._id}>
+          <div className="col-md-6 mb-3" key={property._id}>
             <Card
               className={`property-card ${selectedProperty === property._id ? 'selected-card' : ''}`}
               onClick={() => handleCardSelect(property._id)}
