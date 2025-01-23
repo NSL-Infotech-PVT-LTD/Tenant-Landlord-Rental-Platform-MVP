@@ -147,7 +147,6 @@ exports.addReview = async (req, res) => {
       review_text,
       review_images: reviewImages,
     });
-
     await newReview.save();
         // Add the rating to the property's rating array
         property.rating.push(rating);
