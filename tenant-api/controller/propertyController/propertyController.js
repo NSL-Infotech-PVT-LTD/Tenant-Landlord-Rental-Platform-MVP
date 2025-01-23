@@ -1,7 +1,5 @@
 const Property = require("../../models/propertyModel/property-model");
-
-
-
+const Review = require("../../models/propertyModel/Review-model")
 
 
 //********************ADD PROPERTY*************************/
@@ -107,13 +105,14 @@ exports.addReview = async (req, res) => {
     // Fields from the request body
     const { propertyId, rating, review_text } = req.body;
     // Suppose req.userId is set by authentication middleware
-    const reviewerId = req.userId;
+    // const reviewerId = req.userId;
 
     // Validate required fields
-    if (!reviewerId || !propertyId || !rating || !review_text) {
+    // if (!reviewerId || !propertyId || !rating || !review_text) {
+      if ( !propertyId || !rating || !review_text) {
       return res.status(400).json({
         status: false,
-        message: "All required fields (reviewerId, propertyId, rating, review_text) must be filled.",
+        message: "All required fields ( propertyId, rating, review_text) must be filled.",
       });
     }
 
@@ -143,7 +142,7 @@ exports.addReview = async (req, res) => {
     // Create and save the new review
     const newReview = new Review({
       property: property._id, // or propertyId directly
-      reviewerId,
+      // reviewerId,
       rating,
       review_text,
       review_images: reviewImages,
