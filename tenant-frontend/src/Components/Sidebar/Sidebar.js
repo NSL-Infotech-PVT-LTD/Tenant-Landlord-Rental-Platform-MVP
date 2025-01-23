@@ -7,9 +7,9 @@ import { LuLandPlot } from 'react-icons/lu';
 
 const propertyOptions = [
   { id: 1, icon: <FaHome />, name: 'Home' },
-  { id: 2, icon: <PiBuildingApartmentBold />, name: 'Apartment' },
-  { id: 3, icon: <MdOutlineApartment />, name: 'Commercial' },
-  { id: 4, icon: <LuLandPlot />, name: 'Land Plot' },
+  // { id: 2, icon: <PiBuildingApartmentBold />, name: 'Apartment' },
+  // { id: 3, icon: <MdOutlineApartment />, name: 'Commercial' },
+  // { id: 4, icon: <LuLandPlot />, name: 'Land Plot' },
 ];
 
 const Sidebar = () => {

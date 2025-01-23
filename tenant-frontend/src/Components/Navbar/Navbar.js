@@ -5,14 +5,14 @@ const Navbar = () => {
   return (
     <div className="navbar-main">
       
-      <img src="/logo.png" alt="Logo" className="navbar-logo" />
+      {/* <img src="/logo.png" alt="Logo" className="navbar-logo" />
 
       <ul className="navbar-option">
         <li><a href="/browse">Browse</a></li>
         <li><a href="/rent">Rent</a></li>
         <li><a href="/saved">Saved</a></li>
         <li><a href="/contact">Contactttttttt</a></li>
-      </ul>
+      </ul> */}
 
     
       <div className="navbar-actions">

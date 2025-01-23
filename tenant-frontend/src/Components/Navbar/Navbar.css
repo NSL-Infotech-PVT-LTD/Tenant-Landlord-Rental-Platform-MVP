@@ -1,6 +1,6 @@
 .navbar-main {
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
     background-color: black;
     padding: 14px 28px;
