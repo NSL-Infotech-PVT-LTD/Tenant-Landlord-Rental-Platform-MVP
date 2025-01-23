@@ -149,6 +149,9 @@ exports.addReview = async (req, res) => {
     });
 
     await newReview.save();
+        // Add the rating to the property's rating array
+        property.rating.push(rating);
+        await property.save();
 
     return res.status(201).json({
       status: true,
@@ -163,5 +166,5 @@ exports.addReview = async (req, res) => {
       .json({ status: false, message: "Internal server error." });
   }
 };
-;
+//in this api in property make in array of review add rating value 
 

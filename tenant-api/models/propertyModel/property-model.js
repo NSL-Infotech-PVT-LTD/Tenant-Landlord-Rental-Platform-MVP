@@ -41,6 +41,9 @@ const propertySchema = new mongoose.Schema({
             default: Date.now 
         }
     },
+    rating: {
+        type: [Number],
+    },
 }, {
     timestamps: true // Automatically add createdAt and updatedAt fields
 });
