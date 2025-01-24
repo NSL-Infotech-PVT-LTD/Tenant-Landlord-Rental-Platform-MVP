@@ -1,6 +1,6 @@
 const Property = require("../../models/propertyModel/property-model");
 const Review = require("../../models/propertyModel/Review-model")
-
+const jwt = require('jsonwebtoken');
 
 //********************ADD PROPERTY*************************/
 
@@ -151,8 +151,14 @@ exports.addReview = async (req, res) => {
     });
     await newReview.save();
         // Add the rating to the property's rating array
-        property.rating.push(rating);
-        await property.save();
+        // Add review to the ratings array
+        property.ratings.push({
+          rating,
+          reviewerId
+      });
+
+      // Save updated property
+      await property.save();
 
     return res.status(201).json({
       status: true,

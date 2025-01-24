@@ -103,6 +103,7 @@ exports.userLogin = async (req, res) => {
             message: "Login successful",
             email: existingUser.email,
             token,
+            userId:existingUser.id,
             data: existingUser
         });
 

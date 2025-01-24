@@ -41,9 +41,22 @@ const propertySchema = new mongoose.Schema({
             default: Date.now 
         }
     },
-    rating: {
-        type: [Number],
-    },
+    // rating: {
+    //     type: [Number],
+    // },
+    ratings: [{
+        rating: {
+            type: Number,
+            required: true,
+            min: 1,
+            max: 5
+        },
+        reviewerId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        }
+    }],
 }, {
     timestamps: true // Automatically add createdAt and updatedAt fields
 });
