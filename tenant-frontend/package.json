@@ -22,7 +22,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start-server": "serve -s dist -l 7224"
+    "start-server": "serve -s dist -l 5448"
   },
   "eslintConfig": {
     "extends": [
