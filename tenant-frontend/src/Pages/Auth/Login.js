@@ -101,7 +101,7 @@ const Login = () => {
                     setIsLoading(false);
                 }
                 else {
-                    // NotificationManager.error(data.error)
+                    toast.error(data.message)
                     setIsLoading(false);
                 }
             } catch (error) {
