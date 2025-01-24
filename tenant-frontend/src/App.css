@@ -79,7 +79,7 @@ h6 {
 }
 
 .property-card {
-  width: 100%; /* Makes card take full width */
+  width: 100%;
   cursor: pointer;
   transition: transform 0.3s ease;
 }
