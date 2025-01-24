@@ -136,7 +136,7 @@ const PropertyList = () => {
               const averageRating = calculateAverageRating(property.ratings);
 
               return (
-                <div className="col-md-4 mb-4" key={property._id}>
+                <div className="col-md-4 mb-4 p-3" key={property._id}>
                   <Card
                     className={`property-card ${selectedProperty === property._id ? "selected-card" : ""}`}
                     onClick={() => handleCardSelect(property._id)}

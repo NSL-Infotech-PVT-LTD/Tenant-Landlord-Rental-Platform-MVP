@@ -27,7 +27,8 @@
 .property-list {
   display: flex;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  /* gap: 20px; */
+  flex-wrap: wrap;
 }
 
 .property-card {

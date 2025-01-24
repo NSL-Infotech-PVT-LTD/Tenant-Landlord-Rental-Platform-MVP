@@ -32,8 +32,7 @@ We have created multiple users for demo purposes. You can log in with the follow
 - **email:** `tenant@netscapelabs.com` | **password:** `1234567890`  
 - **email:** `tenant1@netscapelabs.com` | **password:** `1234567890`  
 - **email:** `tenant2@netscapelabs.com` | **password:** `1234567890`  
-- **email:** `tenant3@netscapelabs.com` | **password:** `1234567890`  
-- **email:** `tenant4@netscapelabs.com` | **password:** `1234567890`  
+- **email:** `tenant3@netscapelabs.com` | **password:** `1234567890`   
 
 ---
 
