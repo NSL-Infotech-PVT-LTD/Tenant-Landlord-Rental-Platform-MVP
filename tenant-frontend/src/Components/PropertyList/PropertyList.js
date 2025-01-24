@@ -17,6 +17,7 @@ const PropertyList = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [reviewButton,setReviewButton] = useState(true)
 
   // Function to fetch properties
   const fetchProperties = async () => {
@@ -26,11 +27,12 @@ const PropertyList = () => {
       if (response.data.code === 200) {
         const propertiesData = response.data.properties;
         setProperties(propertiesData);
-
+  
         // Automatically select the first property if none is selected
         if (!selectedProperty && propertiesData.length > 0) {
-          setSelectedProperty(propertiesData[0]._id);
-          localStorage.setItem("propertyId", propertiesData[0]._id);
+          const firstPropertyId = propertiesData[0]._id.toString();
+          setSelectedProperty(firstPropertyId);
+          localStorage.setItem("propertyId", firstPropertyId); // Convert to string before saving
         }
       }
     } catch (error) {
@@ -39,6 +41,7 @@ const PropertyList = () => {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchProperties();
@@ -59,12 +62,12 @@ const PropertyList = () => {
       setLoading(false);
       return toast.error("Please provide a rating");
     }
-
+const userId = localStorage.getItem("userId")
     const formData = new FormData();
     formData.append("review_text", newReview);
     formData.append("rating", rating);
     formData.append("propertyId", selectedProperty); // Ensure `selectedProperty` is valid
-
+formData.append("reviewerId", userId);
     // selectedImages.forEach((photo) => {
     //   formData.append("photos", photo);
     // });
@@ -113,11 +116,11 @@ const PropertyList = () => {
   };
 
   const calculateAverageRating = (ratings) => {
-    if (ratings.length === 0) return 0;
+    if (!Array.isArray(ratings) || ratings.length === 0) return 0; // Handle undefined or empty array
     const totalRating = ratings.reduce((acc, rating) => acc + rating, 0);
     return totalRating / ratings.length;
   };
-
+  
   return (
     <>
       <ToastContainer />
@@ -129,54 +132,59 @@ const PropertyList = () => {
           </div>
         ) : (
           <div className="property-list">
-            {properties.map((property) => {
-              const averageRating = calculateAverageRating(property.rating);
-              return (
-                <div className="col-md-4 mb-4" key={property._id}>
-                  <Card
-                    className={`property-card ${selectedProperty === property._id ? "selected-card" : ""}`}
-                    onClick={() => handleCardSelect(property._id)}
-                  >
-                    <Card.Img
-                      variant="top"
-                      src={property.property_photo.length > 0 ? property.property_photo[0] : "/images/background.jpg"}
-                      className="property-image"
-                    />
-                    <Card.Body className="property-body">
-                      <h6 className="property-title" title={property.property_name}>
-                        {property.property_name}
-                      </h6>
-                      {/* <p className="property-location">
-                      <FaMapMarkerAlt className="icon" /> {property.location.location_name}
-                    </p> */}
-                      {/* <p className="property-description">{property.description}</p> */}
-                      <div className="property-meta">
-                        <p className="price">
-                          <FaDollarSign className="icon" /> {property.price}
-                        </p>
-                      </div>
-                      <p className="property-rating">
-                        Rating: {averageRating.toFixed(1)}
-                        {[...Array(5)].map((_, i) => (
-                          <FaStar
-                            key={i}
-                            color={i < averageRating ? "yellow" : "gray"}
-                          />
-                        ))}
+          {properties.map((property) => {
+            const userId = localStorage.getItem("userId");
+            const hasReviewed = property.ratings.some(
+              (rating) => rating.reviewerId === userId
+            ); // Check if user has reviewed the property
+        
+            const averageRating = calculateAverageRating(property.rating);
+        
+            return (
+              <div className="col-md-4 mb-4" key={property._id}>
+                <Card
+                  className={`property-card ${selectedProperty === property._id ? "selected-card" : ""}`}
+                  onClick={() => handleCardSelect(property._id)}
+                >
+                  <Card.Img
+                    variant="top"
+                    src={property.property_photo.length > 0 ? property.property_photo[0] : "/images/background.jpg"}
+                    className="property-image"
+                  />
+                  <Card.Body className="property-body">
+                    <h6 className="property-title" title={property.property_name}>
+                      {property.property_name}
+                    </h6>
+                    <div className="property-meta">
+                      <p className="price">
+                        <FaDollarSign className="icon" /> {property.price}
                       </p>
-                    </Card.Body>
-                    <Button
+                    </div>
+                    <p className="property-rating">
+                      Rating: {averageRating.toFixed(1)}
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar
+                          key={i}
+                          color={i < averageRating ? "yellow" : "gray"}
+                        />
+                      ))}
+                    </p>
+                  </Card.Body>
+                  {!hasReviewed && ( // Only show button if the user hasn't reviewed
+                    (<Button
                       className="review-button"
                       variant="primary"
                       onClick={() => setShowReviewModal(true)}
                     >
                       Add a Review
-                    </Button>
-                  </Card>
-                </div>
-              );
-            })}
-          </div>
+                    </Button>)
+                  )}
+                </Card>
+              </div>
+            );
+          })}
+        </div>
+        
         )}
 
         {/* Review Modal */}
