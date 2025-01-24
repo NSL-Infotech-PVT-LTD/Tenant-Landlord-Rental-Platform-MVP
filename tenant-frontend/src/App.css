@@ -65,11 +65,9 @@ h6 {
 }
 
 .property-main {
+  margin-bottom: 30px;
   height: 100vh;
   background-color: black;
-}
-
-.property-main {
   padding: 16px;
   border-top-left-radius: 30px;
   background-color: #f7f7f7 !important;
