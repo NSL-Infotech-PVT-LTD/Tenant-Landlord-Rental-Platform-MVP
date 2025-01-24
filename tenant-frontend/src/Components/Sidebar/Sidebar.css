@@ -1,8 +1,18 @@
 .sidebar-main {
-    /* width: 300px; */
     background-color: black;
     padding:16px 32px
 }
+
+/* .sidebar-main {
+    width: 180px;
+    background-color: black;
+    padding: 16px 32px;
+    position: sticky;
+    top: 12px;
+    height: 100vh;
+    overflow-y: auto;
+    overflow: hidden;
+} */
 
 .sidebar-main h6{
     color: rgb(170, 170, 170);

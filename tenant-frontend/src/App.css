@@ -53,6 +53,10 @@ h6 {
   background-color: black;
 }
 
+.property-main::-webkit-scrollbar {
+ display: none;
+}
+
 .homepage-main {
   display: grid;
   grid-template-columns: 0.2fr 3.8fr;
@@ -70,7 +74,9 @@ h6 {
   border-top-left-radius: 30px;
   background-color: #f7f7f7 !important;
   flex: 1;
+  overflow-y: auto;
 }
+
 
 .property-details {
   padding: 16px;
