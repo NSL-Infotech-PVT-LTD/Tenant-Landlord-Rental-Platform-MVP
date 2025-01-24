@@ -4,7 +4,7 @@ https://rentalmvp.netscapelabs.com/
 
 ```bash
 User Name: tenant@netscapelabs.com
-Password: 12234567890
+Password: 1234567890
 ```
 
 # Tenant-Landlord Rental Platform MVP 
