@@ -12,7 +12,6 @@ const Navbar = () => {
 
   return (
     <div className="navbar-main">
-      {/* Uncomment and use these as needed */}
       {/* <img src="/logo.png" alt="Logo" className="navbar-logo" />
       <ul className="navbar-option">
         <li><a href="/browse">Browse</a></li>
