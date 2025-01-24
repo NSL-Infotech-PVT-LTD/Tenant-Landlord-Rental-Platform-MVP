@@ -16,7 +16,6 @@ const PropertyList = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [reviewButton, setReviewButton] = useState(true);
 
   // Function to fetch properties
   const fetchProperties = async () => {
@@ -109,10 +108,11 @@ const PropertyList = () => {
     setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
+  // Updated function to calculate average rating for each property
   const calculateAverageRating = (ratings) => {
     if (!Array.isArray(ratings) || ratings.length === 0) return 0; // Handle undefined or empty array
-    const totalRating = ratings.reduce((acc, rating) => acc + rating, 0);
-    return totalRating / ratings.length;
+    const totalRating = ratings.reduce((acc, { rating }) => acc + rating, 0);
+    return totalRating / ratings.length; // Return average of ratings
   };
 
   return (
@@ -132,7 +132,8 @@ const PropertyList = () => {
                 (rating) => rating.reviewerId === userId
               ); // Check if user has reviewed the property
 
-              const averageRating = calculateAverageRating(property.rating);
+              // Calculate the average rating for each property based on its individual ratings
+              const averageRating = calculateAverageRating(property.ratings);
 
               return (
                 <div className="col-md-4 mb-4" key={property._id}>
@@ -251,7 +252,6 @@ const PropertyList = () => {
 };
 
 export default PropertyList;
-
 
 // import React, { useEffect, useState } from "react";
 // import { Card, Button, Modal, Form, Spinner } from "react-bootstrap";
