@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { addProperty, getProperties, getPropertyById ,addReview} = require("../../controller/propertyController/propertyController");
 const  upload  =require('../../middlewares/multer')
-const authenticateUser = require("../../middlewares/authentication")
+const {authenticateUser} = require("../../middlewares/authentication")
 // POST route to add property
 router.post("/add", upload.array("photos", 5), addProperty);
 
