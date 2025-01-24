@@ -12,6 +12,7 @@ router.get("/", getProperties);
 // GET route to get property by ID
 router.get("/:id", getPropertyById);
 
+//add review
 router.post("/add-review",authenticateUser, upload.array("photos", 5), addReview);
 
 module.exports = router;
