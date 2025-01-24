@@ -85,6 +85,7 @@ const Login = () => {
 
                 console.log("this data here",data);
                 if (data.code === 200) {
+                    localStorage.setItem("userId",data.data._id)
                     storeTokenInLS(data.token);
                     setIsLoggedIn(true);
                     setIsLoading(false);
