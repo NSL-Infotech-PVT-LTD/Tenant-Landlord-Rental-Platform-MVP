@@ -69,6 +69,7 @@ Uses `nodemon` for automatic server restart during development
 
 ## Frontend: tenant-frontend
 
+
 ### Prerequisites
 - Node.js (recommended version 18.x or later)
 - npm (Node Package Manager)
