@@ -54,6 +54,7 @@ const Navbar = () => {
                 Cancel
               </button>
             </div>
+            
           </div>
         </div>
       )}
