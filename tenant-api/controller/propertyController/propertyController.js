@@ -103,18 +103,20 @@ exports.getPropertyById = async (req, res) => {
 exports.addReview = async (req, res) => {
   try {
     // Fields from the request body
-    const { propertyId, rating, review_text } = req.body;
-    // Suppose req.userId is set by authentication middleware
-    // const reviewerId = req.userId;
+    const {reviewerId,propertyId, rating, review_text } = req.body;
 
     // Validate required fields
-    // if (!reviewerId || !propertyId || !rating || !review_text) {
-      if ( !propertyId || !rating || !review_text) {
+    if (!reviewerId || !propertyId || !rating || !review_text) {
+      // if ( !propertyId || !rating || !review_text) {
       return res.status(400).json({
         status: false,
-        message: "All required fields ( propertyId, rating, review_text) must be filled.",
+        message: "All required fields (reviewerId, propertyId, rating, review_text) must be filled.",
       });
     }
+
+    const token = req.headers.authorization.split(" ")[1]
+    const decoded = jwt.decode(token)
+    const userId = decoded.id
 
     if (rating < 1 || rating > 5) {
       return res
@@ -142,7 +144,7 @@ exports.addReview = async (req, res) => {
     // Create and save the new review
     const newReview = new Review({
       property: property._id, // or propertyId directly
-      // reviewerId,
+      reviewerId:userId,
       rating,
       review_text,
       review_images: reviewImages,
