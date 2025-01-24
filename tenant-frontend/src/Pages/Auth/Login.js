@@ -118,9 +118,7 @@ const Login = () => {
                     <div className='signup-card'>
 
                         <div className='welcome-head'>
-                            {/* <img src='/images/welcome.png' alt='logo' /> */}
                             <h1>Welcome</h1>
-                            {/* <p></p> */}
                         </div>
                         <p className='description mb-3'>Log in to your account</p>
                         <div className='signup-width'>
