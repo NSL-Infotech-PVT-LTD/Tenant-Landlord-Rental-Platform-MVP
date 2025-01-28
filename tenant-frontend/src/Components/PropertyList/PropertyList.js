@@ -387,7 +387,7 @@ const PropertyList = ({ searchQuery }) => {
                       className="property-image"
                     />
                     <Card.Body className="property-body">
-                      <div className="d-flex justify-content-between">
+                      <div className="d-flex justify-content-between align-items-center">
                         <h6 className="property-title" title={property.property_name}>
                           {property.property_name}
                         </h6>

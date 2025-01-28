@@ -161,6 +161,7 @@
 .property-price {
   color: #2563eb;
   font-weight: bold;
+  font-size: 13px;
 }
 
 .property-rating {
