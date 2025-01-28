@@ -11,8 +11,6 @@ import { RiArrowRightDoubleLine } from "react-icons/ri";
 import EditProfile from './Auth/EditProfile';
 
 const Tenant = () => {
-
-    const { sidebar, setSidebar } = useAuth();
     const [searchQuery, setSearchQuery] = useState("");
 
     return (

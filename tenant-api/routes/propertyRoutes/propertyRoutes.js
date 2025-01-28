@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { addProperty, getProperties, getPropertyById ,addReview} = require("../../controller/propertyController/propertyController");
+const { addProperty, getProperties, getPropertyById ,addReview,filterProperties} = require("../../controller/propertyController/propertyController");
 const  upload  =require('../../middlewares/multer')
 const {authenticateUser} = require("../../middlewares/authentication")
 // POST route to add property
@@ -14,5 +14,8 @@ router.get("/:id", getPropertyById);
 
 //add review
 router.post("/add-review",authenticateUser, upload.array("photos", 5), addReview);
+
+//filter properties
+router.post("/filter", authenticateUser,filterProperties);
 
 module.exports = router;

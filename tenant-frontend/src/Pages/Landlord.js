@@ -13,7 +13,6 @@ import AddProperty from '../Components/PropertyList/AddProperty';
 
 const Landlord = () => {
 
-    const { sidebar, setSidebar } = useAuth();
     const [searchQuery, setSearchQuery] = useState("");
 
     return (

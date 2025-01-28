@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Store/auth';
 import { IoMdArrowBack } from "react-icons/io";
 import appUrl from '../../appUrl';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
-import 'react-notifications/lib/notifications.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { LuImagePlus } from "react-icons/lu";
 
 const EditProfile = () => {
@@ -16,7 +16,7 @@ const EditProfile = () => {
 
     const [profile, setProfile] = useState({
         username: '',
-        profile_image: null,
+        profile_photo: null,
         email: '',
         mobile_number: ''
     });
@@ -26,7 +26,7 @@ const EditProfile = () => {
         if (loggedUser) {
             setProfile({
                 username: loggedUser.username,
-                profile_image: loggedUser.profile_image,
+                profile_photo: loggedUser.profile_photo,
                 email: loggedUser.email,
                 mobile_number: loggedUser.mobile_number
             });
@@ -45,18 +45,55 @@ const EditProfile = () => {
         const file = e.target.files[0];
         setProfile((prevProfile) => ({
             ...prevProfile,
-            profile_image: file
+            profile_photo: file
         }));
     }
+
+    const handleUpdateProfile = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        try {
+            const userToken = localStorage.getItem('token');
+            const formData = new FormData();
+            formData.append('username', profile.username);
+            if (profile.profile_photo) {
+                formData.append('photos', profile.profile_photo);
+            }
+            const response = await fetch(`${appurl}/user/auth/edit-profile`, {
+                method: "PATCH",
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+            console.log("server data", data);
+            if (data.code === 200) {
+                toast.success(data.message);
+                setLoggedUser({ ...formData }); // Update loggedUser with edited profile data
+                console.log("user data", { ...formData });
+                setIsLoading(false);
+            } else if (data.status === 404) {
+                toast.error(data.message);
+                setIsLoading(false);
+            } else {
+                toast.error(data.message);
+                setIsLoading(false);
+            }
+        } catch (error) {
+            console.error("Error fetching user data", error);
+        }
+    };
 
 
     return (
         <>
-            <NotificationContainer />
+            <ToastContainer />
             <div className='profile'>
                 <div className='profile-head mb-4'>
                     <IoMdArrowBack onClick={()=>(isLandlord? navigate("/home/landlord/"):navigate("/home/tenant/"))}/>
-                    <h4>View Profile</h4>
+                    <h4>Edit Profile</h4>
                     <p></p>
                 </div>
 
@@ -64,11 +101,11 @@ const EditProfile = () => {
                     <Col lg={3} md={3} className='upload  mb-4'>
                         <div className='profile-image mb-3'>
                             <div className='profile-image' onClick={() => document.getElementById('imageInput').click()}>
-                                {profile.profile_image && profile.profile_image instanceof File ? (
-                                    <img src={URL.createObjectURL(profile.profile_image)} alt="profile" />
+                                {profile.profile_photo && profile.profile_photo instanceof File ? (
+                                    <img src={URL.createObjectURL(profile.profile_photo)} alt="profile" />
                                 ) : (
-                                    profile.profile_image ? (
-                                        <img src={profile.profile_image} alt="profile" />
+                                    profile.profile_photo ? (
+                                        <img src={profile.profile_photo} alt="profile" />
                                     ) : (
                                         <LuImagePlus />
                                     )
@@ -121,6 +158,8 @@ const EditProfile = () => {
                         </Form>
                     </Col>
                 </Row>
+
+                <Button onClick={(e) => handleUpdateProfile(e)}>Update Profile</Button>
             </div>
         </>
     )

@@ -5,29 +5,36 @@ const jwt = require('jsonwebtoken');
 //********************ADD PROPERTY*************************/
 
 exports.addProperty = async (req, res) => {
-  const { property_name, price, description, mobile_number, location } = req.body;
-  console.log(req.body)
+  const { property_name, price, description, mobile_number, location, category,property_type} = req.body;
+
+  console.log(req.body,"property_req.body")
+
   try {
     const token = req.headers.authorization.split(" ")[1]
     const decoded = jwt.decode(token)
+
     // Validate required fields
     if (!property_name || !price || !mobile_number) {
       return res.status(400).json({ status: false, message: "All required fields must be filled." });
     }
-    // if (req.files.length > 5) {
-    //   return res.status(400).json({ status: false, message: "You can add only 5 photos" });
-    // }
-    // const property_photo = req?.files.map((file) => file.location);
-    // console.log(property_photo, "nxsjxsnxjsnxnsxnsxnsj");
-    // Create a new property
+
+    if (req.files.length > 5) {
+      return res.status(400).json({ status: false, message: "You can add only 5 photos" });
+    }
+
+    const property_photo = req?.files.map((file) => file.location);
+
+    //Create a new property
     const newProperty = new Property({
       email: decoded.email,
       property_name,
       price,
       description,
       mobile_number,
-      // property_photo,
-      location
+      property_photo,
+      location,
+      category,
+      property_type
     });
 
     await newProperty.save();
@@ -187,43 +194,50 @@ exports.addReview = async (req, res) => {
 //*********************************************/
 
 exports.filterProperties = async (req, res) => {
-  const { min_price, max_price, rating, property_type, rooms } = req.body;
+  const { min_price, max_price, rating, property_type, category } = req.body;
   console.log('Request Body:', req.body); // Log the incoming request body for testing
 
   try {
     // Build the query based on the provided filters
     let filterQuery = {};
 
-    // Filter by price range if provided
-    if (min_price && max_price) {
-      filterQuery.price = { $gte: min_price, $lte: max_price };
-    } else if (min_price) {
-      filterQuery.price = { $gte: min_price };
-    } else if (max_price) {
-      filterQuery.price = { $lte: max_price };
+    // Convert price to numbers and filter by price range if provided
+    const minPrice = parseFloat(min_price);
+    const maxPrice = parseFloat(max_price);
+
+    if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+      filterQuery.price = { $gte: minPrice, $lte: maxPrice };
+    } else if (!isNaN(minPrice)) {
+      filterQuery.price = { $gte: minPrice };
+    } else if (!isNaN(maxPrice)) {
+      filterQuery.price = { $lte: maxPrice };
     }
 
     // Filter by property type if provided
     if (property_type) {
-      filterQuery.property_type = property_type;
+      filterQuery.property_type = { $in: property_type};  // property_type is expected to be a string, not an array
     }
 
-    // Filter by number of rooms if provided
-    if (rooms) {
-      filterQuery.rooms = rooms;
+    // Filter by category if provided
+    if (category) {
+      filterQuery.category = { $in: category };  // category is expected to be a string, not an array
     }
 
-    // Retrieve all properties
+    console.log('Final filter query:', filterQuery);
+
+    // Retrieve properties based on the filter
     const properties = await Property.find(filterQuery);
 
-    // Filter properties where the average rating is greater than or equal to the specified rating
+    console.log('Found properties:', properties);
+
+    // Filter properties based on rating if provided
     const filteredData = properties.filter((property) => {
       if (property.ratings && property.ratings.length > 0) {
         const sumRatings = property.ratings.reduce((sum, ratingObj) => sum + ratingObj.rating, 0);
         const averageRating = sumRatings / property.ratings.length;
-        return averageRating >= rating; // Filter if average rating is >= the provided rating
+        return averageRating >= rating; // Filter properties by rating
       }
-      return false; // If no ratings, exclude the property
+      return rating === 0; // If no rating is set, return properties with no ratings
     });
 
     res.status(200).json({
@@ -236,3 +250,5 @@ exports.filterProperties = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal server error." });
   }
 };
+
+

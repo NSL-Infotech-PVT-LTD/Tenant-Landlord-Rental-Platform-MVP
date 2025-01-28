@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
         username: "",
         email:"",
         mobile_number:"",
-        profile_image: null,
+        profile_photo: null,
     });
     const [isLandlord,setIsLandlord] = useState(() => {
         const storedIsLandlord = localStorage.getItem("role");

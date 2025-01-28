@@ -6,7 +6,7 @@ import "./Navbar.css";
 
 const Navbar = ({ onSearchChange }) => {
   const navigate = useNavigate()
-  const { loggedUser,isLandlord } = useAuth()
+  const { loggedUser, isLandlord } = useAuth()
   const [showModal, setShowModal] = useState(false);
 
   const handleLogout = () => {
@@ -36,11 +36,11 @@ const Navbar = ({ onSearchChange }) => {
         <Button
           variant="light"
           className='user-profile'
-          onClick={()=> isLandlord? navigate("/home/landlord/edit-profile"): navigate("/home/tenant/edit-profile")}
+          onClick={() => isLandlord ? navigate("/home/landlord/edit-profile") : navigate("/home/tenant/edit-profile")}
         >
           {loggedUser.username}
-          {loggedUser.profile_image ?
-            (<img src={loggedUser.profile_image} alt="" />)
+          {loggedUser.profile_photo ?
+            (<img src={loggedUser.profile_photo} alt="" />)
             : <img src='/images/dummy.jpg' />}
         </Button>
 

@@ -10,7 +10,7 @@ const propertySchema = new mongoose.Schema({
         required: true
     },
     price: {
-        type: String
+        type: Number
     },
     description: {
         type: String,
@@ -41,12 +41,12 @@ const propertySchema = new mongoose.Schema({
             default: Date.now 
         }
     },
-    property_type:{
+    category:{
        type: String,
-       enum:[residential,commercial]
+       enum:["residential","commercial"]
     },
-    rooms:{
-      type:String
+    property_type: {
+        type: String
     },
     // rating: {
     //     type: [Number],

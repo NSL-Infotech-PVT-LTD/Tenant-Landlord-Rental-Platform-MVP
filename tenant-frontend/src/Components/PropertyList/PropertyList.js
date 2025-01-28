@@ -16,7 +16,7 @@ import appUrl from "../../appUrl";
 const PropertyList = ({ searchQuery }) => {
   const AppUrl = appUrl();
   const navigate = useNavigate();
-  const { isLandlord } = useAuth()
+  const { isLandlord } = useAuth();
   const [properties, setProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState(localStorage.getItem("propertyId") || "");
@@ -26,15 +26,21 @@ const PropertyList = ({ searchQuery }) => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState(false); // Track filter state
-  const [priceRange, setPriceRange] = useState([0, 1000000]);
-  const [selectedRating, setSelectedRating] = useState(0);
-  const [selectedType, setSelectedType] = useState([]);
-  const [selectedRooms, setSelectedRooms] = useState([]);
+  const [priceRange, setPriceRange] = useState([0, 10000]);
+
+  // Simplified filters state
+  const [filters, setFilters] = useState({
+    min_price: "",
+    max_price: "",
+    category: "",
+    property_type: "",
+    ratings: ""
+  });
 
   // Function to fetch properties
   const fetchProperties = async () => {
     setLoading(true);
-    const userType = isLandlord ? "landlord":"tenant"
+    const userType = isLandlord ? "landlord" : "tenant"
     const tenantToken = localStorage.getItem("token");
     try {
       const response = await axios.get(`${AppUrl}/property/${userType}`, {
@@ -42,7 +48,7 @@ const PropertyList = ({ searchQuery }) => {
           Authorization: `Bearer ${tenantToken}`, // Add the token to the Authorization header
         },
       });
-      
+
       if (response.data.code === 200) {
         let propertiesData = response.data.properties;
 
@@ -147,60 +153,71 @@ const PropertyList = ({ searchQuery }) => {
     const totalRating = ratings.reduce((acc, { rating }) => acc + rating, 0);
     return totalRating / ratings.length; // Return average of ratings
   };
-  // Filter properties based on selected filters
-  const filterProperties = () => {
-    let filtered = properties;
 
-    // Filter by price range
-    filtered = filtered.filter(property =>
-      property.price >= priceRange[0] && property.price <= priceRange[1]
-    );
+  const handleFilterProperties = async () => {
+    setLoading(true);
+    const tenantToken = localStorage.getItem("token");
+    const formData = {
+      min_price: priceRange[0],
+      max_price: priceRange[1],
+      rating: filters.ratings,
+      property_type: filters.property_type,
+      category: filters.category
+    };
 
-    // Filter by rating
-    if (selectedRating > 0) {
-      filtered = filtered.filter(property =>
-        calculateAverageRating(property.ratings) >= selectedRating
-      );
+    try {
+      const response = await axios.post(`${AppUrl}/property/filter`, formData, {
+        headers: {
+          Authorization: `Bearer ${tenantToken}`,
+        },
+      });
+
+      if (response.status === 200) {
+        setFilteredProperties(response.data.data);
+        setActiveFilter(false);
+      } else {
+        toast.error(response.data.message || "An error occurred. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error filtering properties:", error);
+      toast.error("An error occurred while filtering properties. Please try again.");
+    } finally {
+      setLoading(false);
     }
-
-    // Filter by property type
-    if (selectedType.length > 0) {
-      filtered = filtered.filter(property => selectedType.includes(property.type));
-    }
-
-    // Filter by rooms
-    if (selectedRooms.length > 0) {
-      filtered = filtered.filter(property => selectedRooms.some(room => room === property.rooms));
-    }
-
-    setFilteredProperties(filtered);
   };
 
-  // Update filter state and apply filter
   const handleFilterChange = (e) => {
     const { name, value, checked } = e.target;
 
-    if (name === "rating") {
-      setSelectedRating(checked ? value : 0);
+    if (name === "rate") {
+      // Handle radio button for ratings
+      setFilters((prevState) => ({
+        ...prevState,
+        ratings: checked ? value : ""
+      }));
     }
 
-    if (name === "type") {
-      if (checked) {
-        setSelectedType([...selectedType, value]);
-      } else {
-        setSelectedType(selectedType.filter(item => item !== value));
-      }
+    if (name === "category") {
+      // Handle checkboxes for property type
+      setFilters((prevState) => ({
+        ...prevState,
+        category: checked ? value : ""
+      }));
     }
 
-    if (name === "rooms") {
-      if (checked) {
-        setSelectedRooms([...selectedRooms, value]);
-      } else {
-        setSelectedRooms(selectedRooms.filter(item => item !== value));
-      }
+    if (name === "property_type") {
+      // Handle checkbox for category
+      setFilters((prevState) => ({
+        ...prevState,
+        property_type: checked ? value : ""
+      }));
     }
 
-    filterProperties();
+    if (name === "price") {
+      // Handle price range changes
+      const [minPrice, maxPrice] = value.split(",").map(Number);
+      setPriceRange([minPrice, maxPrice]);
+    }
   };
 
   return (
@@ -211,9 +228,9 @@ const PropertyList = ({ searchQuery }) => {
           <div className="property-header">
             <h5 className="mb-4">My properties</h5>
             <Button
-              className="add-new" 
-              onClick={()=>navigate("/home/landlord/add-property")}
-              >
+              className="add-new"
+              onClick={() => navigate("/home/landlord/add-property")}
+            >
               Add New <FaPlus />
             </Button>
           </div>
@@ -234,6 +251,7 @@ const PropertyList = ({ searchQuery }) => {
             <div className="close-filter mb-4">
               <IoIosCloseCircle onClick={() => setActiveFilter(false)} />
             </div>
+
             <h2>Price</h2>
             <ReactSlider
               min={0}
@@ -271,58 +289,68 @@ const PropertyList = ({ searchQuery }) => {
               <span>{priceRange[1]}</span>
             </div>
 
-
             <h2>Rating</h2>
             <div className="mb-3">
-              {[1, 2, 3, 4].map((rate) => (
+              {[1, 2, 3, 4, 5].map((rate) => (
                 <Form.Check
                   key={rate}
                   type="radio"
                   label={`${rate} and above`}
-                  name="rating"
+                  name="rate"
                   value={rate}
-                  checked={selectedRating === rate}
+                  checked={filters.ratings === String(rate)}
                   onChange={handleFilterChange}
                 />
               ))}
             </div>
 
-            <h2>Type</h2>
+            <h2>Category</h2>
             <Form.Check
               type="checkbox"
               label="Residential"
-              value="Residential"
-              name="type"
-              checked={selectedType.includes("Residential")}
+              value="residential"
+              name="category"
+              checked={filters.category === "residential"}
               onChange={handleFilterChange}
             />
-
             <Form.Check
               type="checkbox"
               label="Commercial"
-              value="Commercial"
-              name="type"
+              value="commercial"
+              name="category"
               className="mb-3"
-              checked={selectedType.includes("Commercial")}
+              checked={filters.category === "commercial"}
               onChange={handleFilterChange}
             />
 
-            <h2>Rooms</h2>
-            <div className="mb-3">
-              {["1 BHK", "2 BHK", "3 BHK"].map((room) => (
-                <Form.Check
-                  key={room}
-                  type="checkbox"
-                  label={room}
-                  value={room}
-                  name="rooms"
-                  checked={selectedRooms.includes(room)}
-                  onChange={handleFilterChange}
-                />
-              ))}
-            </div>
+            <h2>Property Type</h2>
+            <Form.Check
+              type="checkbox"
+              label="1 BHK"
+              value="1BHK"
+              name="property_type"
+              checked={filters.property_type === "1BHK"}
+              onChange={handleFilterChange}
+            />
+            <Form.Check
+              type="checkbox"
+              label="2 BHK"
+              value="2BHK"
+              name="property_type"
+              checked={filters.property_type === "2BHK"}
+              onChange={handleFilterChange}
+            />
+            <Form.Check
+              type="checkbox"
+              label="3 BHK"
+              value="3BHK"
+              name="property_type"
+              checked={filters.property_type === "3BHK"}
+              onChange={handleFilterChange}
+            />
 
-            <Button>Apply</Button>
+            <Button onClick={() => setFilters({ min_price: "", max_price: "", category: "", property_type: "", ratings: "" })}>Clear Filters</Button>
+            <Button onClick={handleFilterProperties}>Apply</Button>
           </div>
         )}
 
@@ -332,7 +360,7 @@ const PropertyList = ({ searchQuery }) => {
           </div>
         ) : (
           <div className={`property-list ${activeFilter ? "filter" : ""}`}>
-            {properties.map((property) => {
+            {(filteredProperties.length > 0 ? filteredProperties : properties).map((property) => {
               const userId = localStorage.getItem("userId");
               const hasReviewed = property.ratings.some(
                 (rating) => rating.reviewerId === userId
