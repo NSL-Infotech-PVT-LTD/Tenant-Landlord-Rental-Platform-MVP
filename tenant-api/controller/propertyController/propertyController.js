@@ -119,22 +119,23 @@ exports.getPropertyById = async (req, res) => {
 
 exports.addReview = async (req, res) => {
   try {
-    // Fields from the request body
+    // Extract fields from the request body
     const { reviewerId, propertyId, rating, review_text } = req.body;
 
     // Validate required fields
     if (!reviewerId || !propertyId || !rating || !review_text) {
-      // if ( !propertyId || !rating || !review_text) {
       return res.status(400).json({
         status: false,
         message: "All required fields (reviewerId, propertyId, rating, review_text) must be filled.",
       });
     }
 
-    const token = req.headers.authorization.split(" ")[1]
-    const decoded = jwt.decode(token)
-    const userId = decoded.id
+    // Validate token and get user ID
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.decode(token);
+    const userId = decoded.id;
 
+    // Validate rating value
     if (rating < 1 || rating > 5) {
       return res
         .status(400)
@@ -149,29 +150,23 @@ exports.addReview = async (req, res) => {
         .json({ status: false, message: "Property not found" });
     }
 
-    // Extract image URLs from req.files (uploaded by multer-s3)
-    // Each file has a 'location' property which is the public URL
-    if (req.files.length > 5) {
-      return res
-        .status(404)
-        .json({ status: false, message: "Only 5 images are accepted" });
-    }
-    const reviewImages = req.files.map((file) => file.location);
-    console.log(reviewImages, "dccdkcmdckdcmkcmdkc");
+    // Extract the single image URL from `req.file`
+    const reviewImage = req.file ? req.file.location : null;
+
     // Create and save the new review
     const newReview = new Review({
       property: property._id, // or propertyId directly
       reviewerId: userId,
       rating,
       review_text,
-      review_images: reviewImages,
+      review_image: reviewImage ? reviewImage : "", // Store as an array
     });
     await newReview.save();
+
     // Add the rating to the property's rating array
-    // Add review to the ratings array
     property.ratings.push({
       rating,
-      reviewerId
+      reviewerId,
     });
 
     // Save updated property
@@ -190,6 +185,7 @@ exports.addReview = async (req, res) => {
       .json({ status: false, message: "Internal server error." });
   }
 };
+
 
 //*********************************************/
 

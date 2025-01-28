@@ -22,7 +22,7 @@ const PropertyList = ({ searchQuery }) => {
   const [selectedProperty, setSelectedProperty] = useState(localStorage.getItem("propertyId") || "");
   const [newReview, setNewReview] = useState("");
   const [rating, setRating] = useState(0);
-  const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState("");
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState(false); // Track filter state
@@ -83,11 +83,6 @@ const PropertyList = ({ searchQuery }) => {
     fetchProperties();
   }, [searchQuery]);
 
-  const handleCardSelect = (propertyId) => {
-    setSelectedProperty(propertyId);
-    localStorage.setItem("propertyId", propertyId);
-  };
-
   const handleAddReview = async () => {
     setLoading(true);
     if (!newReview) {
@@ -105,6 +100,7 @@ const PropertyList = ({ searchQuery }) => {
     formData.append("rating", rating);
     formData.append("propertyId", selectedProperty);
     formData.append("reviewerId", userId);
+    formData.append("photos", selectedImage);
 
     const tenantToken = localStorage.getItem("token");
 
@@ -122,7 +118,7 @@ const PropertyList = ({ searchQuery }) => {
       if (response.data.status) {
         setNewReview("");
         setRating(0);
-        setSelectedImages([]);
+        setSelectedImage("");
         setShowReviewModal(false);
         setLoading(false);
         fetchProperties(); // Make sure this updates the properties list
@@ -136,22 +132,6 @@ const PropertyList = ({ searchQuery }) => {
       console.error("Error adding review:", error);
       toast.error("An error occurred while adding the review. Please try again.");
     }
-  };
-
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setSelectedImages(files);
-  };
-
-  const handleDeleteImage = (index) => {
-    setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
-  };
-
-  // Updated function to calculate average rating for each property
-  const calculateAverageRating = (ratings) => {
-    if (!Array.isArray(ratings) || ratings.length === 0) return 0; // Handle undefined or empty array
-    const totalRating = ratings.reduce((acc, { rating }) => acc + rating, 0);
-    return totalRating / ratings.length; // Return average of ratings
   };
 
   const handleFilterProperties = async () => {
@@ -184,6 +164,31 @@ const PropertyList = ({ searchQuery }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+
+  const handleCardSelect = (propertyId) => {
+    setSelectedProperty(propertyId);
+    localStorage.setItem("propertyId", propertyId);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]; // Get only the first file (since it's a string, not an array)
+    if (file) {
+      setSelectedImage(file);
+    }
+  };
+
+  const handleDeleteImage = () => {
+    setSelectedImage(""); // Reset to empty string when deleting
+  };
+
+
+  // Updated function to calculate average rating for each property
+  const calculateAverageRating = (ratings) => {
+    if (!Array.isArray(ratings) || ratings.length === 0) return 0; // Handle undefined or empty array
+    const totalRating = ratings.reduce((acc, { rating }) => acc + rating, 0);
+    return totalRating / ratings.length; // Return average of ratings
   };
 
   const handleFilterChange = (e) => {
@@ -457,22 +462,26 @@ const PropertyList = ({ searchQuery }) => {
               </Form.Group>
               <Form.Group controlId="reviewImages">
                 <Form.Label>Upload images (optional)</Form.Label>
-                <input type="file" multiple onChange={handleImageChange} accept="image/*" className="mb-3" />
+                <input type="file" onChange={handleImageChange} accept="image/*" className="mb-3" />
                 <div className="selected-images">
-                  {selectedImages.map((img, index) => (
-                    <div key={index} className="image-preview">
-                      <img src={URL.createObjectURL(img)} alt={`preview-${index}`} className="image-thumb" />
-                      <Button variant="danger" onClick={() => handleDeleteImage(index)}>
+                  {selectedImage && (
+                    <div className="selected-image-preview">
+                      <img
+                        src={URL.createObjectURL(selectedImage)}
+                        alt="Selected Preview"
+                        className="image-thumb"
+                      />
+                      <Button variant="danger" onClick={handleDeleteImage}>
                         Delete
                       </Button>
                     </div>
-                  ))}
+                  )}
                 </div>
               </Form.Group>
             </Form>
           </Modal.Body>
           <Modal.Footer>
-            <Button className="review-modal-button-cancel" onClick={() => { setShowReviewModal(false); setSelectedImages([]); setNewReview(""); setRating(0) }}>
+            <Button className="review-modal-button-cancel" onClick={() => { setShowReviewModal(false); setSelectedImage(""); setNewReview(""); setRating(0) }}>
               Close
             </Button>
             {loading ? (

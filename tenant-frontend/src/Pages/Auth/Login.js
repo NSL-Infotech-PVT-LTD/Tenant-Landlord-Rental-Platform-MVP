@@ -24,7 +24,7 @@ const Login = () => {
     useEffect(() => {
         localStorage.removeItem("isLoggedIn");
         localStorage.removeItem("token");
-        localStorage.removeItem("selectedItem");
+        localStorage.removeItem("role");
     },[]);
 
     console.log(login.password, "password===0")

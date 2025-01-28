@@ -1,217 +1,780 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Modal, Button, Form, Card } from 'react-bootstrap';
-import { FaStar } from 'react-icons/fa';
-import "./Property.css";
-import appUrl from "../../appUrl";
+// import React, { useEffect, useState } from 'react';
+// import axios from 'axios';
+// import { Modal, Button, Form, Card } from 'react-bootstrap';
+// import { FaStar } from 'react-icons/fa';
+// import "./Property.css";
+// import appUrl from "../../appUrl";
 
-const PropertyDetails = () => {
-  const AppUrl = appUrl();
-  const [property, setProperty] = useState(null);
-  const [reviews, setReviews] = useState([]);
-  const [newReview, setNewReview] = useState("");
-  const [rating, setRating] = useState(0);
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [showReviewModal, setShowReviewModal] = useState(false);
-  const [propertyId, setPropertyId] = useState(localStorage.getItem('propertyId'));
-
-
-  // const propertyId = localStorage.getItem('propertyId');
-
-  // Function to trigger custom event
-  // function triggerLocalStorageEvent(key, value) {
-  //   const event = new CustomEvent('localStorageChange', { detail: { key, value } });
-  //   window.dispatchEvent(event);
-  // }
-
-  // // Override localStorage.setItem
-  // const originalSetItem = localStorage.setItem;
-
-  // localStorage.setItem = function (key, value) {
-  //   originalSetItem.apply(this, arguments); // Call the original setItem method
-  //   triggerLocalStorageEvent(key, value);  // Trigger the custom event
-  // };
-
-  // // Add Event Listener for custom event
-  // window.addEventListener('localStorageChange', (event) => {
-  //   const { key, value } = event.detail;
-  //   console.log(`Key changed: ${key}, New value: ${value}`);
-  // });
+// const PropertyDetails = () => {
+//   const AppUrl = appUrl();
+//   const [property, setProperty] = useState(null);
+//   const [reviews, setReviews] = useState([]);
+//   const [newReview, setNewReview] = useState("");
+//   const [rating, setRating] = useState(0);
+//   const [selectedImages, setSelectedImages] = useState([]);
+//   const [showReviewModal, setShowReviewModal] = useState(false);
+//   const [propertyId, setPropertyId] = useState(localStorage.getItem('propertyId'));
 
 
-  useEffect(() => {
-    if (propertyId) {
-      const fetchPropertyDetails = async () => {
-        try {
-          const response = await axios.get(`${AppUrl}/property/${propertyId}`);
-          if (response.data.status) {
-            setProperty(response.data.property);
-            setReviews(response.data.property.reviews); // Set reviews from the API
-          } else {
-            console.log("Error: Property not found");
-          }
-        } catch (error) {
-          console.error("Error fetching property details:", error);
-        }
-      };
+//   // const propertyId = localStorage.getItem('propertyId');
 
-      fetchPropertyDetails();
-    } else {
-      console.log("No propertyId found in localStorage");
-    }
-  }, [propertyId]);
+//   // Function to trigger custom event
+//   // function triggerLocalStorageEvent(key, value) {
+//   //   const event = new CustomEvent('localStorageChange', { detail: { key, value } });
+//   //   window.dispatchEvent(event);
+//   // }
 
-  const handleAddReview = () => {
-    const formData = new FormData();
-    formData.append('review_text', newReview);
-    formData.append('rating', rating);
+//   // // Override localStorage.setItem
+//   // const originalSetItem = localStorage.setItem;
 
-    // Append images
-    selectedImages.forEach((image) => {
-      formData.append('review_images', image);
-    });
+//   // localStorage.setItem = function (key, value) {
+//   //   originalSetItem.apply(this, arguments); // Call the original setItem method
+//   //   triggerLocalStorageEvent(key, value);  // Trigger the custom event
+//   // };
 
-    axios.post(`${AppUrl}/property/${propertyId}/review`, formData)
-      .then((response) => {
-        if (response.data.status) {
-          setReviews([...reviews, response.data.review]);  // Add the new review to the list
-          setNewReview("");
-          setRating(0);
-          setSelectedImages([]);
-          setShowReviewModal(false);
-        }
-      })
-      .catch((error) => {
-        console.error("Error adding review:", error);
-      });
-  };
+//   // // Add Event Listener for custom event
+//   // window.addEventListener('localStorageChange', (event) => {
+//   //   const { key, value } = event.detail;
+//   //   console.log(`Key changed: ${key}, New value: ${value}`);
+//   // });
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setSelectedImages(files);
-  };
 
-  const handleDeleteImage = (index) => {
-    setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
-  };
+//   useEffect(() => {
+//     if (propertyId) {
+//       const fetchPropertyDetails = async () => {
+//         try {
+//           const response = await axios.get(`${AppUrl}/property/${propertyId}`);
+//           if (response.data.status) {
+//             setProperty(response.data.property);
+//             setReviews(response.data.property.reviews); // Set reviews from the API
+//           } else {
+//             console.log("Error: Property not found");
+//           }
+//         } catch (error) {
+//           console.error("Error fetching property details:", error);
+//         }
+//       };
 
-  return (
-    <div className="property-detail">
-      {property ? (
-        <>
-          <img
-            src={property.property_photo[0]}
-            alt={property.property_name}
-            className="property-image"
-          />
-          <div className="property-header">
-            <div className="property-info">
-              <h2>{property.property_name}</h2>
-              <p>{property.description}</p>
-              <p><strong>Price:</strong> ${property.price}</p>
-              <p><strong>Contact:</strong> {property.mobile_number}</p>
-              <p><strong>Email:</strong> {property.email}</p>
-            </div>
-          </div>
+//       fetchPropertyDetails();
+//     } else {
+//       console.log("No propertyId found in localStorage");
+//     }
+//   }, [propertyId]);
 
-          <div className="reviews-section">
-            <h4>Reviews</h4>
-            {reviews?.length > 0 ? (
-              reviews.map((review, index) => (
-                <Card key={index} className="review-card">
-                  <Card.Body>
-                    <div className="review-rating">
-                      {[...Array(5)].map((_, i) => (
-                        <FaStar key={i} color={i < review.rating ? "yellow" : "gray"} />
-                      ))}
-                    </div>
-                    <p>{review.review_text}</p>
-                    {review.review_images.length > 0 && (
-                      <div className="review-images">
-                        {review.review_images.map((image, i) => (
-                          <img key={i} src={image} alt={`review-img-${i}`} className="review-image" />
-                        ))}
-                      </div>
-                    )}
-                  </Card.Body>
-                </Card>
-              ))
-            ) : (
-              <p>No reviews yet. Be the first to add a review!</p>
-            )}
-          </div>
+//   const handleAddReview = () => {
+//     const formData = new FormData();
+//     formData.append('review_text', newReview);
+//     formData.append('rating', rating);
 
-          <Button variant="primary" onClick={() => setShowReviewModal(true)}>
-            Add a Review
-          </Button>
+//     // Append images
+//     selectedImages.forEach((image) => {
+//       formData.append('review_images', image);
+//     });
 
-          {/* Add Review Modal */}
-          <Modal show={showReviewModal} onHide={() => setShowReviewModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>Add a Review</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form>
-                <Form.Group controlId="reviewText">
-                  <Form.Label>Write your review</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    value={newReview}
-                    onChange={(e) => setNewReview(e.target.value)}
-                  />
-                </Form.Group>
-                <Form.Group controlId="rating">
-                  <Form.Label>Rate this property</Form.Label>
-                  <div className="stars">
-                    {[...Array(5)].map((_, i) => (
-                      <FaStar
-                        key={i}
-                        onClick={() => setRating(i + 1)}
-                        color={i < rating ? "yellow" : "gray"}
-                        className="star"
-                      />
-                    ))}
-                  </div>
-                </Form.Group>
-                <Form.Group controlId="reviewImages">
-                  <Form.Label>Upload images (optional)</Form.Label>
-                  <input
-                    type="file"
-                    multiple
-                    onChange={handleImageChange}
-                    accept="image/*"
-                  />
-                  <div className="selected-images">
-                    {selectedImages.map((img, index) => (
-                      <div key={index} className="image-preview">
-                        <img
-                          src={URL.createObjectURL(img)}
-                          alt={`preview-${index}`}
-                          className="image-thumb"
-                        />
-                        <Button variant="danger" onClick={() => handleDeleteImage(index)}>Delete</Button>
-                      </div>
-                    ))}
-                  </div>
-                </Form.Group>
-              </Form>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowReviewModal(false)}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={handleAddReview}>
-                Submit Review
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        </>
-      ) : (
-        <p>Loading property details...</p>
-      )}
-    </div>
-  );
-};
+//     axios.post(`${AppUrl}/property/${propertyId}/review`, formData)
+//       .then((response) => {
+//         if (response.data.status) {
+//           setReviews([...reviews, response.data.review]);  // Add the new review to the list
+//           setNewReview("");
+//           setRating(0);
+//           setSelectedImages([]);
+//           setShowReviewModal(false);
+//         }
+//       })
+//       .catch((error) => {
+//         console.error("Error adding review:", error);
+//       });
+//   };
 
-export default PropertyDetails;
+//   const handleImageChange = (e) => {
+//     const files = Array.from(e.target.files);
+//     setSelectedImages(files);
+//   };
+
+//   const handleDeleteImage = (index) => {
+//     setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
+//   };
+
+//   return (
+//     <div className="property-detail">
+//       {property ? (
+//         <>
+//           <img
+//             src={property.property_photo[0]}
+//             alt={property.property_name}
+//             className="property-image"
+//           />
+//           <div className="property-header">
+//             <div className="property-info">
+//               <h2>{property.property_name}</h2>
+//               <p>{property.description}</p>
+//               <p><strong>Price:</strong> ${property.price}</p>
+//               <p><strong>Contact:</strong> {property.mobile_number}</p>
+//               <p><strong>Email:</strong> {property.email}</p>
+//             </div>
+//           </div>
+
+//           <div className="reviews-section">
+//             <h4>Reviews</h4>
+//             {reviews?.length > 0 ? (
+//               reviews.map((review, index) => (
+//                 <Card key={index} className="review-card">
+//                   <Card.Body>
+//                     <div className="review-rating">
+//                       {[...Array(5)].map((_, i) => (
+//                         <FaStar key={i} color={i < review.rating ? "yellow" : "gray"} />
+//                       ))}
+//                     </div>
+//                     <p>{review.review_text}</p>
+//                     {review.review_images.length > 0 && (
+//                       <div className="review-images">
+//                         {review.review_images.map((image, i) => (
+//                           <img key={i} src={image} alt={`review-img-${i}`} className="review-image" />
+//                         ))}
+//                       </div>
+//                     )}
+//                   </Card.Body>
+//                 </Card>
+//               ))
+//             ) : (
+//               <p>No reviews yet. Be the first to add a review!</p>
+//             )}
+//           </div>
+
+//           <Button variant="primary" onClick={() => setShowReviewModal(true)}>
+//             Add a Review
+//           </Button>
+
+//           {/* Add Review Modal */}
+//           <Modal show={showReviewModal} onHide={() => setShowReviewModal(false)}>
+//             <Modal.Header closeButton>
+//               <Modal.Title>Add a Review</Modal.Title>
+//             </Modal.Header>
+//             <Modal.Body>
+//               <Form>
+//                 <Form.Group controlId="reviewText">
+//                   <Form.Label>Write your review</Form.Label>
+//                   <Form.Control
+//                     as="textarea"
+//                     rows={3}
+//                     value={newReview}
+//                     onChange={(e) => setNewReview(e.target.value)}
+//                   />
+//                 </Form.Group>
+//                 <Form.Group controlId="rating">
+//                   <Form.Label>Rate this property</Form.Label>
+//                   <div className="stars">
+//                     {[...Array(5)].map((_, i) => (
+//                       <FaStar
+//                         key={i}
+//                         onClick={() => setRating(i + 1)}
+//                         color={i < rating ? "yellow" : "gray"}
+//                         className="star"
+//                       />
+//                     ))}
+//                   </div>
+//                 </Form.Group>
+//                 <Form.Group controlId="reviewImages">
+//                   <Form.Label>Upload images (optional)</Form.Label>
+//                   <input
+//                     type="file"
+//                     multiple
+//                     onChange={handleImageChange}
+//                     accept="image/*"
+//                   />
+//                   <div className="selected-images">
+//                     {selectedImages.map((img, index) => (
+//                       <div key={index} className="image-preview">
+//                         <img
+//                           src={URL.createObjectURL(img)}
+//                           alt={`preview-${index}`}
+//                           className="image-thumb"
+//                         />
+//                         <Button variant="danger" onClick={() => handleDeleteImage(index)}>Delete</Button>
+//                       </div>
+//                     ))}
+//                   </div>
+//                 </Form.Group>
+//               </Form>
+//             </Modal.Body>
+//             <Modal.Footer>
+//               <Button variant="secondary" onClick={() => setShowReviewModal(false)}>
+//                 Close
+//               </Button>
+//               <Button variant="primary" onClick={handleAddReview}>
+//                 Submit Review
+//               </Button>
+//             </Modal.Footer>
+//           </Modal>
+//         </>
+//       ) : (
+//         <p>Loading property details...</p>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default PropertyDetails;
+
+// import React, { useEffect, useState } from "react";
+// import { Card, Button, Modal, Form, Spinner } from "react-bootstrap";
+// import axios from "axios";
+// import { ToastContainer, toast } from 'react-toastify';
+// import { FaPlus } from "react-icons/fa";
+// import { useAuth } from "../../Store/auth";
+// import 'react-toastify/dist/ReactToastify.css';
+// import { FaStar, FaDollarSign } from "react-icons/fa";
+// import { IoIosCloseCircle } from "react-icons/io";
+// import { IoFilter } from "react-icons/io5";
+// import ReactSlider from "react-slider";
+// import { useNavigate } from "react-router-dom";
+// import "./Property.css";
+// import appUrl from "../../appUrl";
+
+// const PropertyList = ({ searchQuery }) => {
+//   const AppUrl = appUrl();
+//   const navigate = useNavigate();
+//   const { isLandlord } = useAuth();
+//   const [properties, setProperties] = useState([]);
+//   const [filteredProperties, setFilteredProperties] = useState([]);
+//   const [selectedProperty, setSelectedProperty] = useState(localStorage.getItem("propertyId") || "");
+//   const [newReview, setNewReview] = useState("");
+//   const [rating, setRating] = useState(0);
+//   const [selectedImage, setSelectedImage] = useState("");
+//   const [showReviewModal, setShowReviewModal] = useState(false);
+//   const [loading, setLoading] = useState(false);
+//   const [activeFilter, setActiveFilter] = useState(false); // Track filter state
+//   const [priceRange, setPriceRange] = useState([0, 10000]);
+
+//   // Simplified filters state
+//   const [filters, setFilters] = useState({
+//     min_price: "",
+//     max_price: "",
+//     category: "",
+//     property_type: "",
+//     ratings: ""
+//   });
+
+//   // Fetch properties from the API
+//   // Fetch properties from the API
+//   const fetchProperties = async () => {
+//     setLoading(true);
+//     const userType = isLandlord ? "landlord" : "tenant";
+//     const tenantToken = localStorage.getItem("token");
+
+//     try {
+//       const response = await axios.get(`${AppUrl}/property/${userType}`, {
+//         headers: {
+//           Authorization: `Bearer ${tenantToken}`,
+//         },
+//       });
+
+//       if (response.data.code === 200) {
+//         let propertiesData = response.data.properties;
+
+//         // If searchQuery exists, filter properties by property_name
+//         if (searchQuery) {
+//           propertiesData = propertiesData.filter(property =>
+//             property.property_name.toLowerCase().includes(searchQuery.toLowerCase())
+//           );
+//         }
+
+//         setProperties(propertiesData);
+//         setFilteredProperties(propertiesData); // Initially set filtered properties to all fetched properties
+
+//         if (!selectedProperty && propertiesData.length > 0) {
+//           const firstPropertyId = propertiesData[0]._id.toString();
+//           setSelectedProperty(firstPropertyId);
+//           localStorage.setItem("propertyId", firstPropertyId);
+//         }
+//       }
+//     } catch (error) {
+//       console.error("Error fetching properties:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchProperties();
+//   }, []);  // Fetch properties when the component is mounted
+
+//   useEffect(() => {
+//     fetchProperties();
+//   }, [searchQuery]);  // Re-fetch properties if search query changes
+
+//   // Handle adding a review
+//   const handleAddReview = async () => {
+//     setLoading(true);
+
+//     if (!newReview) {
+//       setLoading(false);
+//       return toast.error("Please enter a review");
+//     }
+//     if (!rating) {
+//       setLoading(false);
+//       return toast.error("Please provide a rating");
+//     }
+
+//     const userId = localStorage.getItem("userId");
+//     const formData = new FormData();
+//     formData.append("review_text", newReview);
+//     formData.append("rating", rating);
+//     formData.append("propertyId", selectedProperty);
+//     formData.append("reviewerId", userId);
+//     formData.append("photos", selectedImage);
+
+//     const tenantToken = localStorage.getItem("token");
+
+//     if (!tenantToken) {
+//       return toast.error("User is not authenticated. Please log in.");
+//     }
+
+//     try {
+//       const response = await axios.post(`${AppUrl}/property/add-review`, formData, {
+//         headers: {
+//           Authorization: `Bearer ${tenantToken}`,
+//         },
+//       });
+
+//       if (response.data.status) {
+//         // Add the review to the selected property locally
+//         const updatedProperties = properties.map(property => {
+//           if (property._id === selectedProperty) {
+//             property.ratings.push({
+//               rating,
+//               reviewerId: userId,
+//               review_text: newReview,
+//               photos: selectedImage,
+//             });
+//           }
+//           return property;
+//         });
+
+//         setProperties(updatedProperties);
+
+//         // Reapply filters after adding the review
+//         applyFilters(updatedProperties);
+
+//         setNewReview("");
+//         setRating(0);
+//         setSelectedImage("");
+//         setShowReviewModal(false);
+//         setLoading(false);
+//         toast.success("Review added successfully!");
+//       } else {
+//         toast.error(response.data.message || "Failed to add review.");
+//         setLoading(false);
+//       }
+//     } catch (error) {
+//       setLoading(false);
+//       console.error("Error adding review:", error);
+//       toast.error("An error occurred while adding the review. Please try again.");
+//     }
+//   };
+
+//   // Apply filters to properties list
+//   const applyFilters = (propertiesList) => {
+//     // Ensure propertiesList is an array
+//     if (!Array.isArray(propertiesList)) {
+//       propertiesList = [];
+//     }
+
+//     let filteredList = propertiesList;
+
+//     // Apply price range filter
+//     if (filters.min_price !== "" && filters.max_price !== "") {
+//       filteredList = filteredList.filter(property =>
+//         property.price >= filters.min_price && property.price <= filters.max_price
+//       );
+//     }
+
+//     // Apply property type filter
+//     if (filters.property_type) {
+//       filteredList = filteredList.filter(property =>
+//         property.property_type === filters.property_type
+//       );
+//     }
+
+//     // Apply rating filter
+//     if (filters.ratings) {
+//       filteredList = filteredList.filter(property => {
+//         if (property.ratings && property.ratings.length > 0) {
+//           const sumRatings = property.ratings.reduce((sum, ratingObj) => sum + ratingObj.rating, 0);
+//           const averageRating = sumRatings / property.ratings.length;
+//           return averageRating >= filters.ratings;
+//         }
+//         return false; // If no ratings, it won't be included if a rating filter is set
+//       });
+//     }
+
+//     // Apply category filter
+//     if (filters.category) {
+//       filteredList = filteredList.filter(property => property.category === filters.category);
+//     }
+
+//     // Update the filtered properties list
+//     setFilteredProperties(filteredList);
+//   };
+
+//   // Handle filter changes
+//   const handleFilterChange = (e) => {
+//     const { name, value, checked } = e.target;
+
+//     setFilters(prevFilters => {
+//       let updatedFilters = { ...prevFilters };
+
+//       if (name === "rate") {
+//         updatedFilters.ratings = value;
+//       }
+
+//       if (name === "type") {
+//         if (checked) {
+//           updatedFilters.property_type = value;
+//         } else {
+//           updatedFilters.property_type = "";
+//         }
+//       }
+
+//       if (name === "category") {
+//         updatedFilters.category = value;
+//       }
+
+//       return updatedFilters;
+//     });
+
+//     // Reapply filters after changes
+//     applyFilters(properties);
+//   };
+
+//   // Handle applying the filters
+//   const handleFilterProperties = () => {
+//     setLoading(true);
+//     applyFilters(properties);
+//     setActiveFilter(true);
+//     setLoading(false);
+//   };
+
+//   // Handle clearing filters
+//   const handleClearFilters = () => {
+//     setFilters({
+//       min_price: "",
+//       max_price: "",
+//       category: "",
+//       property_type: "",
+//       ratings: ""
+//     });
+//     setActiveFilter(false);
+//     setFilteredProperties(properties);
+//   };
+
+//   // Render filtered or all properties
+//   const propertiesToDisplay = activeFilter ? filteredProperties : properties;
+
+
+//   useEffect(() => {
+//     fetchProperties();
+//   }, [searchQuery]);
+
+//   //ok so problem is if if i add filters then filteredPRoperties are shown to me that is correct but on adding review again all properties are shown to me instead of filteredPRoperties so suggest i should i map the properties
+
+//   const handleCardSelect = (propertyId) => {
+//     setSelectedProperty(propertyId);
+//     localStorage.setItem("propertyId", propertyId);
+//   };
+
+//   const handleImageChange = (e) => {
+//     const file = e.target.files[0]; // Get only the first file (since it's a string, not an array)
+//     if (file) {
+//       setSelectedImage(file);
+//     }
+//   };
+
+//   const handleDeleteImage = () => {
+//     setSelectedImage(""); // Reset to empty string when deleting
+//   };
+
+
+//   // Updated function to calculate average rating for each property
+//   const calculateAverageRating = (ratings) => {
+//     if (!Array.isArray(ratings) || ratings.length === 0) return 0; // Handle undefined or empty array
+//     const totalRating = ratings.reduce((acc, { rating }) => acc + rating, 0);
+//     return totalRating / ratings.length; // Return average of ratings
+//   };
+
+//   return (
+//     <>
+//       <ToastContainer />
+//       <div className="property-view-main">
+//         {isLandlord ? (
+//           <div className="property-header">
+//             <h5 className="mb-4">My properties</h5>
+//             <Button
+//               className="add-new"
+//               onClick={() => navigate("/home/landlord/add-property")}
+//             >
+//               Add New <FaPlus />
+//             </Button>
+//           </div>
+//         ) :
+//           (
+//             <div className="property-header">
+//               <h5 className="mb-4">Search Results</h5>
+//               <p
+//                 className="filter-text"
+//                 onClick={() => setActiveFilter(true)}>
+//                 Filters <IoFilter />
+//               </p>
+//             </div>
+//           )}
+
+//         {activeFilter && (
+//           <div className="filter-main">
+//             <div className="close-filter mb-4">
+//               <IoIosCloseCircle onClick={() => setActiveFilter(false)} />
+//             </div>
+
+//             <h2>Price</h2>
+//             <ReactSlider
+//               min={0}
+//               max={10000}
+//               value={priceRange}
+//               onChange={(value) => setPriceRange(value)}
+//               step={1000}
+//               className="mb-3"
+//               renderTrack={(props, state) => (
+//                 <div
+//                   {...props}
+//                   style={{
+//                     ...props.style,
+//                     height: "6px",
+//                     borderRadius: "5px",
+//                     background: "#ddd",
+//                   }}
+//                 />
+//               )}
+//               renderThumb={(props, state) => (
+//                 <div
+//                   {...props}
+//                   style={{
+//                     ...props.style,
+//                     height: "20px",
+//                     width: "20px",
+//                     borderRadius: "50%",
+//                     background: "#007bff",
+//                   }}
+//                 />
+//               )}
+//             />
+//             <div className="price-range-labels mb-3">
+//               <span>{priceRange[0]}</span>
+//               <span>{priceRange[1]}</span>
+//             </div>
+
+//             <h2>Rating</h2>
+//             <div className="mb-3">
+//               {[1, 2, 3, 4, 5].map((rate) => (
+//                 <Form.Check
+//                   key={rate}
+//                   type="radio"
+//                   label={`${rate} and above`}
+//                   name="rate"
+//                   value={rate}
+//                   checked={filters.ratings === String(rate)}
+//                   onChange={handleFilterChange}
+//                 />
+//               ))}
+//             </div>
+
+//             <h2>Category</h2>
+//             <Form.Check
+//               type="checkbox"
+//               label="Residential"
+//               value="residential"
+//               name="category"
+//               checked={filters.category === "residential"}
+//               onChange={handleFilterChange}
+//             />
+//             <Form.Check
+//               type="checkbox"
+//               label="Commercial"
+//               value="commercial"
+//               name="category"
+//               className="mb-3"
+//               checked={filters.category === "commercial"}
+//               onChange={handleFilterChange}
+//             />
+
+//             <h2>Property Type</h2>
+//             <Form.Check
+//               type="checkbox"
+//               label="1 BHK"
+//               value="1BHK"
+//               name="property_type"
+//               checked={filters.property_type === "1BHK"}
+//               onChange={handleFilterChange}
+//             />
+//             <Form.Check
+//               type="checkbox"
+//               label="2 BHK"
+//               value="2BHK"
+//               name="property_type"
+//               checked={filters.property_type === "2BHK"}
+//               onChange={handleFilterChange}
+//             />
+//             <Form.Check
+//               type="checkbox"
+//               label="3 BHK"
+//               value="3BHK"
+//               name="property_type"
+//               checked={filters.property_type === "3BHK"}
+//               onChange={handleFilterChange}
+//             />
+
+//             <Button onClick={()=>handleClearFilters()}>Clear Filters</Button>
+//             <Button onClick={()=>handleFilterProperties()}>Apply</Button>
+//           </div>
+//         )}
+
+//         {loading ? (
+//           <div className="spinner-container">
+//             <Spinner animation="border" />
+//           </div>
+//         ) : (
+//           <div className={`property-list ${activeFilter ? "filter" : ""}`}>
+//             {propertiesToDisplay.map((property) => {
+//               const userId = localStorage.getItem("userId");
+//               const hasReviewed = property.ratings.some(
+//                 (rating) => rating.reviewerId === userId
+//               ); // Check if user has reviewed the property
+
+//               // Calculate the average rating for each property based on its individual ratings
+//               const averageRating = calculateAverageRating(property.ratings);
+
+//               return (
+//                 <div className="col-md-4 mb-4 p-3" key={property._id}>
+//                   <Card
+//                     className={`property-card ${selectedProperty === property._id ? "selected-card" : ""}`}
+//                     onClick={() => handleCardSelect(property._id)}
+//                   >
+//                     <Card.Img
+//                       variant="top"
+//                       src={property.property_photo.length > 0 ? property.property_photo[0] : "/images/background.jpg"}
+//                       className="property-image"
+//                     />
+//                     <Card.Body className="property-body">
+//                       <h6 className="property-title" title={property.property_name}>
+//                         {property.property_name}
+//                       </h6>
+//                       <p className="mb-2">
+//                         {property.description.length > 80
+//                           ? `${property.description.substring(0, 80)}...`
+//                           : property.description}
+//                       </p>
+
+//                       <div className="property-meta">
+//                         <p className="price">
+//                           <FaDollarSign className="icon" /> {property.price}
+//                         </p>
+//                       </div>
+//                       <p className="property-rating">
+//                         Rating: {averageRating.toFixed(1)}
+//                         {[...Array(5)].map((_, i) => (
+//                           <FaStar
+//                             key={i}
+//                             color={i < averageRating ? "yellow" : "gray"}
+//                           />
+//                         ))}
+//                       </p>
+//                     </Card.Body>
+//                     {!hasReviewed && !isLandlord && ( // Only show button if the user hasn't reviewed
+//                       <Button
+//                         className="review-button"
+//                         variant="primary"
+//                         onClick={() => setShowReviewModal(true)}
+//                       >
+//                         Add a Review
+//                       </Button>
+//                     )}
+//                   </Card>
+//                 </div>
+//               );
+//             })}
+//           </div>
+//         )}
+
+//         {/* Review Modal */}
+//         <Modal
+//           show={showReviewModal}
+//           onHide={() => setShowReviewModal(false)}
+//           backdrop="static"
+//         >
+//           <Modal.Header>
+//             <Modal.Title>Add a Review</Modal.Title>
+//           </Modal.Header>
+//           <Modal.Body className="modal-body-custom">
+//             <Form>
+//               <Form.Group controlId="reviewText">
+//                 <Form.Label>Write your review</Form.Label>
+//                 <Form.Control
+//                   as="textarea"
+//                   rows={3}
+//                   value={newReview}
+//                   onChange={(e) => setNewReview(e.target.value)}
+//                   className="mb-3"
+//                 />
+//               </Form.Group>
+//               <Form.Group controlId="rating">
+//                 <Form.Label>Rate this property</Form.Label>
+//                 <div className="stars mb-3">
+//                   {[...Array(5)].map((_, i) => (
+//                     <FaStar
+//                       key={i}
+//                       onClick={() => setRating(i + 1)}
+//                       color={i < rating ? "yellow" : "gray"}
+//                       className="star"
+//                     />
+//                   ))}
+//                 </div>
+//               </Form.Group>
+//               <Form.Group controlId="reviewImages">
+//                 <Form.Label>Upload images (optional)</Form.Label>
+//                 <input type="file" onChange={handleImageChange} accept="image/*" className="mb-3" />
+//                 <div className="selected-images">
+//                   {selectedImage && (
+//                     <div className="selected-image-preview">
+//                       <img
+//                         src={URL.createObjectURL(selectedImage)}
+//                         alt="Selected Preview"
+//                         className="image-thumb"
+//                       />
+//                       <Button variant="danger" onClick={handleDeleteImage}>
+//                         Delete
+//                       </Button>
+//                     </div>
+//                   )}
+//                 </div>
+//               </Form.Group>
+//             </Form>
+//           </Modal.Body>
+//           <Modal.Footer>
+//             <Button className="review-modal-button-cancel" onClick={() => { setShowReviewModal(false); setSelectedImage(""); setNewReview(""); setRating(0) }}>
+//               Close
+//             </Button>
+//             {loading ? (
+//               <Button className="review-modal-button-submit" onClick={handleAddReview}>
+//                 <Spinner animation="border" />
+//               </Button>
+//             ) : (
+//               <Button className="review-modal-button-submit" onClick={handleAddReview}>
+//                 Submit Review
+//               </Button>
+//             )}
+//           </Modal.Footer>
+//         </Modal>
+//       </div>
+//     </>
+//   );
+// };
+
+// export default PropertyList;

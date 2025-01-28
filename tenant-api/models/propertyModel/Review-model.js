@@ -17,11 +17,9 @@ const reviewSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    review_images: [
-      {
+    review_image: {
         type: String, // This will store URLs of the images
-      },
-    ],
+    },
     // Reference to the Property model
     property: {
       type: mongoose.Schema.Types.ObjectId,

@@ -13,7 +13,7 @@ router.get("/:userType",authenticateUser, getProperties);
 router.get("/:id", getPropertyById);
 
 //add review
-router.post("/add-review",authenticateUser, upload.array("photos", 5), addReview);
+router.post("/add-review",authenticateUser, upload.single("photos"),addReview);
 
 //filter properties
 router.post("/filter", authenticateUser,filterProperties);
