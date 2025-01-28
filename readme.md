@@ -25,14 +25,26 @@ The project consists of two main directories:
 
 ---
 
-## Description  
-In this project, users can log in as tenants to explore properties listed by different landlords. Tenants can provide reviews for these properties, enhancing transparency and trust.  
+# **Project Description**  
 
-We have created multiple users for demo purposes. You can log in with the following credentials:  
-- **email:** `tenant@netscapelabs.com` | **password:** `1234567890`  
-- **email:** `tenant1@netscapelabs.com` | **password:** `1234567890`  
-- **email:** `tenant2@netscapelabs.com` | **password:** `1234567890`  
-- **email:** `tenant3@netscapelabs.com` | **password:** `1234567890`   
+This project allows users to sign up as either **tenants** or **landlords**.  
+
+- **Tenants** can explore properties listed by various landlords, search and filter listings, and leave reviews to enhance transparency and trust.  
+- **Landlords** can list their properties, edit their profiles, and manage their property listings.  
+
+## **Demo Credentials**  
+
+We have created multiple demo accounts for testing:  
+
+### **Tenants**  
+- **Email:** `tenant@netscapelabs.com` | **Password:** `1234567890`  
+- **Email:** `tenant1@netscapelabs.com` | **Password:** `1234567890`    
+
+### **Landlords**  
+- **Email:** `landlord@netscapelabs.com` | **Password:** `1234567890`  
+- **Email:** `landlord1@netscapelabs.com` | **Password:** `1234567890`    
+
+ **Start exploring properties or managing listings with ease!**
 
 ---
 
