@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './Sidebar.css';
 import { FaHome } from 'react-icons/fa';
+import { useAuth } from '../../Store/auth';
+import { useNavigate } from 'react-router-dom';
 import { PiBuildingApartmentBold } from 'react-icons/pi';
 import { MdOutlineApartment } from 'react-icons/md';
 import { LuLandPlot } from 'react-icons/lu';
@@ -13,11 +15,9 @@ const propertyOptions = [
 ];
 
 const Sidebar = () => {
-  const [selectedOption, setSelectedOption] = useState(1);
 
-  const handleOptionClick = (id) => {
-    setSelectedOption(id);
-  };
+  const navigate = useNavigate();
+  const { isLandlord } = useAuth()
 
   return (
     <div className="sidebar-main">
@@ -27,9 +27,9 @@ const Sidebar = () => {
       <div className="sidebar-options">
         {propertyOptions.map((option) => (
           <div
-            className={`sidebar-name ${selectedOption === option.id ? 'selected' : ''}`}
+            className="sidebar-name"
             key={option.id}
-            onClick={() => handleOptionClick(option.id)}
+            onClick={() => isLandlord ? navigate("/home/landlord") : navigate("/home/tenant")}
           >
             {option.icon}
             <p>{option.name}</p>

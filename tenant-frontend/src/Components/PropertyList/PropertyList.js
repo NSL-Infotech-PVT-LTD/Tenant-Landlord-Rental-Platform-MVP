@@ -166,7 +166,6 @@ const PropertyList = ({ searchQuery }) => {
     }
   };
 
-
   const handleCardSelect = (propertyId) => {
     setSelectedProperty(propertyId);
     localStorage.setItem("propertyId", propertyId);
@@ -354,8 +353,10 @@ const PropertyList = ({ searchQuery }) => {
               onChange={handleFilterChange}
             />
 
-            <Button onClick={() => setFilters({ min_price: "", max_price: "", category: "", property_type: "", ratings: "" })}>Clear Filters</Button>
-            <Button onClick={handleFilterProperties}>Apply</Button>
+            <div className="filter-buttons">
+              <Button className="filter-btn-1" onClick={() => setFilters({ priceRange: [], category: "", property_type: "", ratings: "" })}>Clear Filters</Button>
+              <Button className="filter-btn-2" onClick={handleFilterProperties}>Apply</Button>
+            </div>
           </div>
         )}
 
@@ -386,20 +387,23 @@ const PropertyList = ({ searchQuery }) => {
                       className="property-image"
                     />
                     <Card.Body className="property-body">
-                      <h6 className="property-title" title={property.property_name}>
-                        {property.property_name}
-                      </h6>
-                      <p className="mb-2">
+                      <div className="d-flex justify-content-between">
+                        <h6 className="property-title" title={property.property_name}>
+                          {property.property_name}
+                        </h6>
+
+                        <p className="property-price">
+                          <FaDollarSign className="icon" /> {property.price}
+                        </p>
+                      </div>
+                      <p className="property-description mb-2">
                         {property.description.length > 80
                           ? `${property.description.substring(0, 80)}...`
                           : property.description}
                       </p>
-
-                      <div className="property-meta">
-                        <p className="price">
-                          <FaDollarSign className="icon" /> {property.price}
-                        </p>
-                      </div>
+                      <p className="property-category">
+                        {property.category}
+                      </p>
                       <p className="property-rating">
                         Rating: {averageRating.toFixed(1)}
                         {[...Array(5)].map((_, i) => (

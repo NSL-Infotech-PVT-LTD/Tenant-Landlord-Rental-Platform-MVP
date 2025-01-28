@@ -1,48 +1,74 @@
 .property-list-container {
   padding: 20px;
 }
- 
-.property-view-main{
+
+.property-view-main {
   position: relative;
 }
 
-.property-list.filter{
+.property-list.filter {
   filter: blur(4px);
 }
 
-.filter-main h2{
-font-size: 18px;
-color: white;
-font-weight: 600;
-margin-bottom: 5px;
-}
-.filter-main svg{
-   float: right;
-   font-size: 24px;
-   margin-bottom: 25px;
+.filter-main h2 {
+  font-size: 18px;
+  color: white;
+  font-weight: 600;
+  margin-bottom: 5px;
 }
 
-.thumb.thumb-0,.thumb.thumb-1 {
+.filter-main svg {
+  float: right;
+  font-size: 24px;
+  margin-bottom: 25px;
+}
+
+.thumb.thumb-0,
+.thumb.thumb-1 {
   top: -6px;
 }
-.price-range-labels{
+
+.price-range-labels {
   display: flex;
   justify-content: space-between;
   font-size: 16px;
   font-weight: 600;
 }
-.filter-main{
+
+.filter-main {
   padding: 20px !important;
   color: white;
   padding: 0;
   top: 0;
   min-height: 100vh;
   height: 100%;
-  background: black;
-  width: 257px;
+  background: #161616;
+  width: 300px;
   position: absolute;
   right: 0;
   z-index: 1
+}
+
+.filter-buttons {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-around;
+  column-gap: 20px;
+}
+
+.filter-btn-1 {
+  width: 50%;
+  border: 1px solid blue;
+  background-color: #161616;
+  color: white;
+}
+
+.filter-btn-2 {
+  width: 50%
+}
+
+.filter-main label {
+  color: #c5c5c5
 }
 
 .title {
@@ -58,6 +84,7 @@ margin-bottom: 5px;
   align-items: center;
   height: 300px;
 }
+
 .property-view-main .modal-content {
   background: white;
   padding: 20px;
@@ -66,9 +93,11 @@ margin-bottom: 5px;
   text-align: left;
   width: 560px;
 }
-.filter-text{
+
+.filter-text {
   font-weight: 600;
 }
+
 .property-list {
   display: flex;
   transition: filter 0.3s ease;
@@ -77,7 +106,7 @@ margin-bottom: 5px;
   flex-wrap: wrap;
 }
 
-.property-list.filter{
+.property-list.filter {
   filter: blur(4px);
 }
 
@@ -99,9 +128,10 @@ margin-bottom: 5px;
 }
 
 .property-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
-  margin: 10px 0;
+  margin:6px 0;
+  color: #1f2937 ;
   height: 24px;
   overflow: hidden;
 }
@@ -118,11 +148,8 @@ margin-bottom: 5px;
 }
 
 .property-description {
-  font-size: 14px;
-  color: #777;
-  margin-bottom: 10px;
-  height: 36px;
-  overflow: hidden;
+    color: #6b7280;
+    font-weight: 600;
 }
 
 .property-meta {
@@ -131,15 +158,15 @@ margin-bottom: 5px;
   align-items: center;
 }
 
-.property-meta .price {
-  color: #007bff;
+.property-price {
+  color: #2563eb;
   font-weight: bold;
 }
 
 .property-rating {
   display: flex;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 6px;
 }
 
 .review-button {
@@ -194,16 +221,23 @@ textarea.form-control {
   padding: 2px 5px;
 }
 
-.form-label{
+.no-margin-row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.input-label {
   font-size: 18px;
   font-weight: 600;
 }
+
 .property-view-main .modal-title {
   font-weight: 700;
   display: flex;
   justify-content: center;
-text-align: center;
+  text-align: center;
 }
+
 .review-modal-button-cancel {
   color: red;
   padding: 8px 24px;
@@ -213,6 +247,7 @@ text-align: center;
   border: 1px solid red;
   font-size: 16px;
 }
+
 .review-modal-button-submit {
   color: white;
   padding: 8px 24px;
@@ -222,26 +257,43 @@ text-align: center;
   border: 1px solid #008000;
   font-size: 16px;
 }
-.property-header{
+
+.property-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin:10px;
+  margin: 10px;
 }
-.property-header h5{
+.property-category{
+  font-weight: 600;
+  color: #f97316;
+}
+.property-header h5 {
   font-weight: 600;
   margin-bottom: 0 !important;
 }
-.add-new{
-    font-weight: 600;
-    font-size: 14px;
+
+.add-new {
+  font-weight: 600;
+  font-size: 14px;
 }
 
-.property-form{
-  padding: 20px;
+.property-form {
+  padding: 40px;
 }
 
+.property-form .form-control {
+  line-height: 2.0;
+}
 
+textarea.form-control {
+  background-color: white;
+}
+
+.blur-effect {
+  filter: blur(1px);
+  pointer-events: none;
+}
 
 /*details*/
 .upload-image {
@@ -258,7 +310,8 @@ text-align: center;
   border-style: dashed;
   border-radius: 10px;
 }
-.uploaded{
+
+.uploaded {
   border: none;
 }
 
@@ -299,9 +352,5 @@ text-align: center;
   justify-content: center;
   align-items: center;
   width: 150px;
-  height: 150px;
-  /* border: 1px solid #cecece;
-  background-color: #FAFAFA; */
-  /* font-size: 30px;
-  color: #757575; */
+  height: 150px
 }

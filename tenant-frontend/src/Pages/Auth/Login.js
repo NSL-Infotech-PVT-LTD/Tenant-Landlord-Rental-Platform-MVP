@@ -25,6 +25,7 @@ const Login = () => {
         localStorage.removeItem("isLoggedIn");
         localStorage.removeItem("token");
         localStorage.removeItem("role");
+        localStorage.removeItem("userId");
     },[]);
 
     console.log(login.password, "password===0")
@@ -85,13 +86,15 @@ const Login = () => {
 
                 console.log("this data here",data);
                 if (data.code === 200) {
-                    localStorage.setItem("userId",data.data._id)
                     localStorage.setItem("role",data.data.user_type)
                     if(data.data.user_type === "tenant"){
                         setIsLandlord(false)
                         console.log("role")
+                    }else{
+                        setIsLandlord(true)
                     };
                     storeTokenInLS(data.token);
+                    localStorage.setItem("userId",data.data._id)
                     setIsLoggedIn(true);
                     setIsLoading(false);
                     console.log("Login successful");

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button,Row,Col } from 'react-bootstrap';
+import { Form, Button, Row, Col, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Store/auth';
 import { IoMdArrowBack } from "react-icons/io";
@@ -10,17 +10,15 @@ import { LuImagePlus } from "react-icons/lu";
 
 const EditProfile = () => {
     const navigate = useNavigate()
-    const { loggedUser, setLoggedUser, isLandlord} = useAuth();
-    // const [updateButton,setUpdateButton]= useState(false);
+    const { loggedUser, setLoggedUser, isLandlord } = useAuth();
+    const [loading, setLoading] = useState(false);
     const appurl = appUrl();
-
     const [profile, setProfile] = useState({
         username: '',
         profile_photo: null,
         email: '',
         mobile_number: ''
     });
-    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (loggedUser) {
@@ -51,7 +49,7 @@ const EditProfile = () => {
 
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
+        setLoading(true);
         try {
             const userToken = localStorage.getItem('token');
             const formData = new FormData();
@@ -73,13 +71,14 @@ const EditProfile = () => {
                 toast.success(data.message);
                 setLoggedUser({ ...formData }); // Update loggedUser with edited profile data
                 console.log("user data", { ...formData });
-                setIsLoading(false);
+                setLoading(false);
+                window.location.reload()
             } else if (data.status === 404) {
                 toast.error(data.message);
-                setIsLoading(false);
+                setLoading(false);
             } else {
                 toast.error(data.message);
-                setIsLoading(false);
+                setLoading(false);
             }
         } catch (error) {
             console.error("Error fetching user data", error);
@@ -92,7 +91,7 @@ const EditProfile = () => {
             <ToastContainer />
             <div className='profile'>
                 <div className='profile-head mb-4'>
-                    <IoMdArrowBack onClick={()=>(isLandlord? navigate("/home/landlord/"):navigate("/home/tenant/"))}/>
+                    <IoMdArrowBack onClick={() => (isLandlord ? navigate("/home/landlord/") : navigate("/home/tenant/"))} />
                     <h4>Edit Profile</h4>
                     <p></p>
                 </div>
@@ -119,7 +118,17 @@ const EditProfile = () => {
                                 />
                             </div>
                         </div>
-                        <p> Add Profile Picture</p>
+
+                        {profile.profile_photo ? (
+                            <p style={{ color: "red" }} onClick={() => setProfile({ ...profile, profile_photo: null})}>
+                                Remove Profile Picture
+                            </p>
+                        ) : (
+                            <p style={{ color: "green" }}>
+                                Add Profile Picture
+                            </p>
+                        )}
+
                     </Col>
                     <Col lg={9} md={9} >
                         <Form className='address-details mb-3'>
@@ -159,7 +168,22 @@ const EditProfile = () => {
                     </Col>
                 </Row>
 
-                <Button onClick={(e) => handleUpdateProfile(e)}>Update Profile</Button>
+                <div className='d-flex justify-content-center'>
+                    <Button className='add-btn' onClick={(e) => handleUpdateProfile(e)} disabled={loading}>
+                        {loading ? (
+                            <Spinner
+                                as="span"
+                                animation="border"
+                                size="sm"
+                                role="status"
+                                aria-hidden="true"
+                                className='address-spinner'
+                            />
+                        ) : (
+                            <p>Update Profile</p>
+                        )}
+                    </Button>
+                </div>
             </div>
         </>
     )

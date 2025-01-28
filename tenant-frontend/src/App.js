@@ -33,6 +33,8 @@ function App() {
   );
 }
 
+//problem is when i sign in as tenant and logout and again sign in as landlord then redirecting to /home/tenant/ but on refresh redirected to /home/landlord/ 
+
 export default () => (
   <AuthProvider>
     <App />
