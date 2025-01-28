@@ -393,7 +393,7 @@ const PropertyList = ({ searchQuery }) => {
                         </h6>
 
                         <p className="property-price">
-                          <FaDollarSign className="icon" /> {property.price}
+                          <FaDollarSign className="icon" />{property.price}
                         </p>
                       </div>
                       <p className="property-description mb-2">
