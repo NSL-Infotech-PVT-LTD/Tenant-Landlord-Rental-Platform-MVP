@@ -239,7 +239,7 @@ exports.filterProperties = async (req, res) => {
     res.status(200).json({
       status: true,
       code: 200,
-      data: filteredData,
+      data: properties,
     });
   } catch (error) {
     console.error("Error filtering properties:", error.message);
