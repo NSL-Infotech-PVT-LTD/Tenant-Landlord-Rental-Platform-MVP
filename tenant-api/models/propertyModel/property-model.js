@@ -41,6 +41,13 @@ const propertySchema = new mongoose.Schema({
             default: Date.now 
         }
     },
+    property_type:{
+       type: String,
+       enum:[residential,commercial]
+    },
+    rooms:{
+      type:String
+    },
     // rating: {
     //     type: [Number],
     // },

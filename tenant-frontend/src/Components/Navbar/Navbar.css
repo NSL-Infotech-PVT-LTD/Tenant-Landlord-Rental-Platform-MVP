@@ -129,3 +129,10 @@
 .cancel-button:hover {
   opacity: 0.9;
 }
+.user-profile img{
+  margin-left: 5px;
+  background-color: #FE6F00;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+}

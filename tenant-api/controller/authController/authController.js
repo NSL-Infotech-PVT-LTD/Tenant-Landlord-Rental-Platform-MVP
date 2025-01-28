@@ -7,9 +7,11 @@ const bcrypt = require('bcrypt');
 // Utility functions
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const validateMobileNumber = (number) => number.toString().length >= 10 && number.toString().length <= 15;
+
+
 //********************SIGN UP*************************/
 exports.userSignup = async (req, res) => {
-    const { username, password, email, mobile_number, whats_app, country } = req.body;
+    const { username, password, email, mobile_number,license_number, whats_app, country,user_type } = req.body;
 
     try {
         // Validate required fields
@@ -39,8 +41,10 @@ exports.userSignup = async (req, res) => {
             password: hashedPassword,// Hash password here before saving
             email,
             mobile_number,
+            license_number,
             whats_app,
-            country
+            country,
+            user_type
         });
 
         await newUser.save();
@@ -55,7 +59,9 @@ exports.userSignup = async (req, res) => {
             status: true,
             code: 201,
             message: "User signed up successfully",
-            token:token
+            token:token,
+            data:newUser,
+            role:user_type
         });
     } catch (error) {
         console.error("Error during signup:", error);
@@ -103,7 +109,6 @@ exports.userLogin = async (req, res) => {
             message: "Login successful",
             email: existingUser.email,
             token,
-            userId:existingUser.id,
             data: existingUser
         });
 

@@ -16,10 +16,10 @@
   color: black;
   margin: 30px 0;
   width: 430px;
-  min-height: 440px;
+  min-height: 480px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   flex-direction: column;
   padding: 20px 0;
 }
@@ -72,10 +72,8 @@
   position: relative;
 }
 
-.passwordTyping {}
 
 .SignUp-button {
-  
   text-align: center;
   width: 360px;
   height: 55px;
@@ -200,7 +198,6 @@ input:-internal-autofill-selected {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 30px;
 }
 
 .SignUp-button button p {
@@ -226,4 +223,16 @@ input:-internal-autofill-selected {
   color: #1F61FF;
   cursor: pointer;
   text-decoration: underline;
+}
+
+.create-new{
+  border: 1px solid #868699;
+  color: #202093;
+  font-size: 14px;
+  font-weight: 600;
+}
+.create-new-main{
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 }

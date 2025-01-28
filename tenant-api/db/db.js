@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 let mongodbUrl = process.env.MODE == "prod" ? process.env.prodUrl : process.env.devUrl
-
+console.log(mongodbUrl)
 
 
 

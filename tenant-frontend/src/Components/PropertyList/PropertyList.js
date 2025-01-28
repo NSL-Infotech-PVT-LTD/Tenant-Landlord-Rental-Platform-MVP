@@ -2,28 +2,57 @@ import React, { useEffect, useState } from "react";
 import { Card, Button, Modal, Form, Spinner } from "react-bootstrap";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
+import { FaPlus } from "react-icons/fa";
+import { useAuth } from "../../Store/auth";
 import 'react-toastify/dist/ReactToastify.css';
 import { FaStar, FaDollarSign } from "react-icons/fa";
+import { IoIosCloseCircle } from "react-icons/io";
+import { IoFilter } from "react-icons/io5";
+import ReactSlider from "react-slider";
+import { useNavigate } from "react-router-dom";
 import "./Property.css";
 import appUrl from "../../appUrl";
 
-const PropertyList = () => {
+const PropertyList = ({ searchQuery }) => {
   const AppUrl = appUrl();
+  const navigate = useNavigate();
+  const { isLandlord } = useAuth()
   const [properties, setProperties] = useState([]);
+  const [filteredProperties, setFilteredProperties] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState(localStorage.getItem("propertyId") || "");
   const [newReview, setNewReview] = useState("");
   const [rating, setRating] = useState(0);
   const [selectedImages, setSelectedImages] = useState([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [activeFilter, setActiveFilter] = useState(false); // Track filter state
+  const [priceRange, setPriceRange] = useState([0, 1000000]);
+  const [selectedRating, setSelectedRating] = useState(0);
+  const [selectedType, setSelectedType] = useState([]);
+  const [selectedRooms, setSelectedRooms] = useState([]);
 
   // Function to fetch properties
   const fetchProperties = async () => {
     setLoading(true);
+    const userType = isLandlord ? "landlord":"tenant"
+    const tenantToken = localStorage.getItem("token");
     try {
-      const response = await axios.get(`${AppUrl}/property`);
+      const response = await axios.get(`${AppUrl}/property/${userType}`, {
+        headers: {
+          Authorization: `Bearer ${tenantToken}`, // Add the token to the Authorization header
+        },
+      });
+      
       if (response.data.code === 200) {
-        const propertiesData = response.data.properties;
+        let propertiesData = response.data.properties;
+
+        // If searchQuery exists, filter properties by property_name
+        if (searchQuery) {
+          propertiesData = propertiesData.filter(property =>
+            property.property_name.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        }
+
         setProperties(propertiesData);
 
         // Automatically select the first property if none is selected
@@ -43,6 +72,10 @@ const PropertyList = () => {
   useEffect(() => {
     fetchProperties();
   }, []);
+
+  useEffect(() => {
+    fetchProperties();
+  }, [searchQuery]);
 
   const handleCardSelect = (propertyId) => {
     setSelectedProperty(propertyId);
@@ -114,18 +147,191 @@ const PropertyList = () => {
     const totalRating = ratings.reduce((acc, { rating }) => acc + rating, 0);
     return totalRating / ratings.length; // Return average of ratings
   };
+  // Filter properties based on selected filters
+  const filterProperties = () => {
+    let filtered = properties;
+
+    // Filter by price range
+    filtered = filtered.filter(property =>
+      property.price >= priceRange[0] && property.price <= priceRange[1]
+    );
+
+    // Filter by rating
+    if (selectedRating > 0) {
+      filtered = filtered.filter(property =>
+        calculateAverageRating(property.ratings) >= selectedRating
+      );
+    }
+
+    // Filter by property type
+    if (selectedType.length > 0) {
+      filtered = filtered.filter(property => selectedType.includes(property.type));
+    }
+
+    // Filter by rooms
+    if (selectedRooms.length > 0) {
+      filtered = filtered.filter(property => selectedRooms.some(room => room === property.rooms));
+    }
+
+    setFilteredProperties(filtered);
+  };
+
+  // Update filter state and apply filter
+  const handleFilterChange = (e) => {
+    const { name, value, checked } = e.target;
+
+    if (name === "rating") {
+      setSelectedRating(checked ? value : 0);
+    }
+
+    if (name === "type") {
+      if (checked) {
+        setSelectedType([...selectedType, value]);
+      } else {
+        setSelectedType(selectedType.filter(item => item !== value));
+      }
+    }
+
+    if (name === "rooms") {
+      if (checked) {
+        setSelectedRooms([...selectedRooms, value]);
+      } else {
+        setSelectedRooms(selectedRooms.filter(item => item !== value));
+      }
+    }
+
+    filterProperties();
+  };
 
   return (
     <>
       <ToastContainer />
       <div className="property-view-main">
-        <h5 className="mb-4">Search Results</h5>
+        {isLandlord ? (
+          <div className="property-header">
+            <h5 className="mb-4">My properties</h5>
+            <Button
+              className="add-new" 
+              onClick={()=>navigate("/home/landlord/add-property")}
+              >
+              Add New <FaPlus />
+            </Button>
+          </div>
+        ) :
+          (
+            <div className="property-header">
+              <h5 className="mb-4">Search Results</h5>
+              <p
+                className="filter-text"
+                onClick={() => setActiveFilter(true)}>
+                Filters <IoFilter />
+              </p>
+            </div>
+          )}
+
+        {activeFilter && (
+          <div className="filter-main">
+            <div className="close-filter mb-4">
+              <IoIosCloseCircle onClick={() => setActiveFilter(false)} />
+            </div>
+            <h2>Price</h2>
+            <ReactSlider
+              min={0}
+              max={10000}
+              value={priceRange}
+              onChange={(value) => setPriceRange(value)}
+              step={1000}
+              className="mb-3"
+              renderTrack={(props, state) => (
+                <div
+                  {...props}
+                  style={{
+                    ...props.style,
+                    height: "6px",
+                    borderRadius: "5px",
+                    background: "#ddd",
+                  }}
+                />
+              )}
+              renderThumb={(props, state) => (
+                <div
+                  {...props}
+                  style={{
+                    ...props.style,
+                    height: "20px",
+                    width: "20px",
+                    borderRadius: "50%",
+                    background: "#007bff",
+                  }}
+                />
+              )}
+            />
+            <div className="price-range-labels mb-3">
+              <span>{priceRange[0]}</span>
+              <span>{priceRange[1]}</span>
+            </div>
+
+
+            <h2>Rating</h2>
+            <div className="mb-3">
+              {[1, 2, 3, 4].map((rate) => (
+                <Form.Check
+                  key={rate}
+                  type="radio"
+                  label={`${rate} and above`}
+                  name="rating"
+                  value={rate}
+                  checked={selectedRating === rate}
+                  onChange={handleFilterChange}
+                />
+              ))}
+            </div>
+
+            <h2>Type</h2>
+            <Form.Check
+              type="checkbox"
+              label="Residential"
+              value="Residential"
+              name="type"
+              checked={selectedType.includes("Residential")}
+              onChange={handleFilterChange}
+            />
+
+            <Form.Check
+              type="checkbox"
+              label="Commercial"
+              value="Commercial"
+              name="type"
+              className="mb-3"
+              checked={selectedType.includes("Commercial")}
+              onChange={handleFilterChange}
+            />
+
+            <h2>Rooms</h2>
+            <div className="mb-3">
+              {["1 BHK", "2 BHK", "3 BHK"].map((room) => (
+                <Form.Check
+                  key={room}
+                  type="checkbox"
+                  label={room}
+                  value={room}
+                  name="rooms"
+                  checked={selectedRooms.includes(room)}
+                  onChange={handleFilterChange}
+                />
+              ))}
+            </div>
+
+            <Button>Apply</Button>
+          </div>
+        )}
+
         {loading ? (
           <div className="spinner-container">
             <Spinner animation="border" />
           </div>
         ) : (
-          <div className="property-list">
+          <div className={`property-list ${activeFilter ? "filter" : ""}`}>
             {properties.map((property) => {
               const userId = localStorage.getItem("userId");
               const hasReviewed = property.ratings.some(
@@ -150,6 +356,12 @@ const PropertyList = () => {
                       <h6 className="property-title" title={property.property_name}>
                         {property.property_name}
                       </h6>
+                      <p className="mb-2">
+                        {property.description.length > 80
+                          ? `${property.description.substring(0, 80)}...`
+                          : property.description}
+                      </p>
+
                       <div className="property-meta">
                         <p className="price">
                           <FaDollarSign className="icon" /> {property.price}
@@ -165,7 +377,7 @@ const PropertyList = () => {
                         ))}
                       </p>
                     </Card.Body>
-                    {!hasReviewed && ( // Only show button if the user hasn't reviewed
+                    {!hasReviewed && !isLandlord && ( // Only show button if the user hasn't reviewed
                       <Button
                         className="review-button"
                         variant="primary"

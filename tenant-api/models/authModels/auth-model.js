@@ -21,6 +21,10 @@ const authSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    license_number: {
+        type: String,
+        trim: true
+    },
     profile_photo: {
         type: String,
     },
@@ -32,6 +36,10 @@ const authSchema = new mongoose.Schema({
         type: String,
         trim: true,
         lowercase: true
+    },
+    user_type:{
+      type:String,
+      enum:["tenant","landlord"]
     },
     location: {
         location_name: { 

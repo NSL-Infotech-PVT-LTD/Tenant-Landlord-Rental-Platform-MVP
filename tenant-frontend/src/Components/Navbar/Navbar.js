@@ -1,7 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import { useAuth } from "../../Store/auth";
 import "./Navbar.css";
 
-const Navbar = () => {
+const Navbar = ({ onSearchChange }) => {
+  const navigate = useNavigate()
+  const { loggedUser,isLandlord } = useAuth()
   const [showModal, setShowModal] = useState(false);
 
   const handleLogout = () => {
@@ -10,22 +15,35 @@ const Navbar = () => {
     window.location.reload(); // Reloads the page after logout
   };
 
+  const [searchValue, setSearchValue] = useState("");
+
+  const handleSearchChange = (e) => {
+    setSearchValue(e.target.value);
+    onSearchChange(e.target.value);
+  };
+
   return (
     <div className="navbar-main">
-      {/* <img src="/logo.png" alt="Logo" className="navbar-logo" />
-      <ul className="navbar-option">
-        <li><a href="/browse">Browse</a></li>
-        <li><a href="/rent">Rent</a></li>
-        <li><a href="/saved">Saved</a></li>
-        <li><a href="/contact">Contact</a></li>
-      </ul> */}
-
       <div className="navbar-actions">
         <input
           type="text"
           placeholder="Search..."
+          value={searchValue}
           className="navbar-search"
+          onChange={handleSearchChange}
         />
+
+        <Button
+          variant="light"
+          className='user-profile'
+          onClick={()=> isLandlord? navigate("/home/landlord/edit-profile"): navigate("/home/tenant/edit-profile")}
+        >
+          {loggedUser.username}
+          {loggedUser.profile_image ?
+            (<img src={loggedUser.profile_image} alt="" />)
+            : <img src='/images/dummy.jpg' />}
+        </Button>
+
         <button
           className="navbar-logout"
           onClick={() => setShowModal(true)}
@@ -53,7 +71,7 @@ const Navbar = () => {
                 Cancel
               </button>
             </div>
-            
+
           </div>
         </div>
       )}

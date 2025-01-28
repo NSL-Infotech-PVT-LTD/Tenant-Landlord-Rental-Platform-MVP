@@ -9,12 +9,12 @@ import { useAuth } from '../../Store/auth';
 import appUrl from '../../appUrl';
 import "./Login.css"
 
-const Login = () => {
+const Login = () => { 
     const AppUrl = appUrl();
     const [emailfill,setemailfill]=useState(true);
     const [passfill,setpassfill]=useState(true);
     const [notific,setnotific]=useState(true);
-    const { storeTokenInLS, setIsLoggedIn } = useAuth();
+    const { storeTokenInLS, setIsLoggedIn,setIsLandlord } = useAuth();
     const navigate = useNavigate();
     const [login, setLogin] = useState({
         email: "",
@@ -86,6 +86,11 @@ const Login = () => {
                 console.log("this data here",data);
                 if (data.code === 200) {
                     localStorage.setItem("userId",data.data._id)
+                    localStorage.setItem("role",data.data.user_type)
+                    if(data.data.user_type === "tenant"){
+                        setIsLandlord(false)
+                        console.log("role")
+                    };
                     storeTokenInLS(data.token);
                     setIsLoggedIn(true);
                     setIsLoading(false);
@@ -137,7 +142,7 @@ const Login = () => {
                                         />
                                     </div>
                                     {!emailfill && <p style={{color:'red'}}>Email Is Required</p>}
-                                    <div className='signup-fields password_set_wrap'>
+                                    <div className='signup-fields password_set_wrap mb-4'>
                                         <label htmlFor="password">PASSWORD</label>
                                         <input
                                             type={showPassword ? 'text' : 'password'}
@@ -156,13 +161,10 @@ const Login = () => {
                                     </div>
                                     {!passfill && <p style={{color:'red'}}>Password Is Required</p>}
                                     
-                                    {/* <div className='forget mb-3' >
-                                        <p onClick={() => navigate('/forget-password')}>Forgot Password?</p>
-                                    </div> */}
-                                    <div className='SignUp-button'>
+                                    <div className='SignUp-button mb-3'>
                                         <Button type="submit" disabled={isLoading}>
                                             {isLoading ? (
-                                                <div className="loader">loading</div>
+                                                <div className="loader">Loading...</div>
                                             ) : (
                                                 <p>Log in<IoIosArrowForward /></p>
                                             )}
@@ -171,10 +173,21 @@ const Login = () => {
                                 </div>
                             </form>
 
-                            {/* <div>
-                                <p className='already mb-3'>
-                                    Don’t have an account ? <span onClick={() => (navigate("/signup"))}>Sign Up</span>
-                                </p></div> */}
+                            <div>
+                                <p className='already mb-2'>
+                                    Don’t have an account ? 
+                                </p>
+                                </div>
+                                <div className='create-new-main'>
+                                    <Button className='create-new' variant='light'
+                                     onClick={() => navigate('/tenant-signup')}>
+                                   Sign up as a Tenant
+                                </Button>
+                                <Button className='create-new' variant='light'
+                                 onClick={() => navigate('/landlord-signup')}>
+                                   Sign up as a Landlord
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>

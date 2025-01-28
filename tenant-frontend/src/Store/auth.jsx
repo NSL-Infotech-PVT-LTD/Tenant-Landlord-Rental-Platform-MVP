@@ -10,9 +10,16 @@ const appurl = appUrl();
 export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(() => localStorage.getItem("token") || null);
     const [loggedUser, setLoggedUser] = useState({
-        name: "",
-        image: null,
+        username: "",
+        email:"",
+        mobile_number:"",
+        profile_image: null,
     });
+    const [isLandlord,setIsLandlord] = useState(() => {
+        const storedIsLandlord = localStorage.getItem("role");
+        return storedIsLandlord === "tenant" ? false : true;
+    });
+
     // const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
     const [isLoggedIn, setIsLoggedIn] = useState(() => {
         const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
@@ -55,7 +62,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <>
-            <AuthContext.Provider value={{ isLoggedIn, storeTokenInLS, loggedUser, setLoggedUser, authorizationToken}}>
+            <AuthContext.Provider value={{ isLoggedIn, storeTokenInLS, loggedUser, setLoggedUser, authorizationToken,isLandlord,setIsLandlord}}>
                 {children}
             </AuthContext.Provider>
             <NotificationContainer />
